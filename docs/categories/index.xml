@@ -5,12 +5,12 @@
     
     
     
-    <link>/categories/</link>
+    <link>https://davidjoliver86.github.io/categories/</link>
     <description>Recent content in Categories on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-	<atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://davidjoliver86.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>

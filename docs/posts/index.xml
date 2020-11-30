@@ -5,21 +5,21 @@
     
     
     
-    <link>/posts/</link>
+    <link>https://davidjoliver86.github.io/posts/</link>
     <description>Recent content in Posts on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 29 Nov 2020 21:02:02 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://davidjoliver86.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>My First Post</title>
-      <link>/posts/my-first-post/</link>
-      <pubDate>Sun, 29 Nov 2020 21:02:02 +0000</pubDate>
+      <title>Part 1 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-1-newegg/</link>
+      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/my-first-post/</guid>
+      <guid>https://davidjoliver86.github.io/posts/part-1-newegg/</guid>
       <description>
         
           
@@ -28,8 +28,8 @@
         
         
         
-          lalala this is my first post
-def what(): return &amp;#39;yeah&amp;#39; 
+          In this series, we&amp;rsquo;re going to create a &amp;ldquo;stock checker&amp;rdquo; in Python, and then later on, we&amp;rsquo;re going to deploy it on AWS. We&amp;rsquo;re not going to spin up any EC2 instances either; this is going to be running as a &amp;ldquo;serverless&amp;rdquo; bot. And we&amp;rsquo;re not going to need to have to do much, if any, clicking and pointing in the AWS console, thanks to the power of Terraform.
+Stock checker?
           
         
         </description>
