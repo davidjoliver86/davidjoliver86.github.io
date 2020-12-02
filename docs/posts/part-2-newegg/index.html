@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        Part 2 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform ::
+        The musings of Mister Davido
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="In this part, we&amp;rsquo;re going to focus on getting a Terraform environment setup. Instead of clicking around in the AWS web console, we&amp;rsquo;re going to be writing declarative config files that will define our &amp;ldquo;infrastructure-as-code&amp;rdquo;. We&amp;rsquo;re going to also make some small changes to our parser from the last part to get it ready to deploy as a Lambda function.
+We&amp;rsquo;re transforming Mars into a habitible planet? I wish. But no, we&amp;rsquo;re just going to be writing code in which we define the AWS resources we want to create, and Terraform will take that code and translate it into AWS API calls such that what&amp;rsquo;s deployed matches how we&amp;rsquo;ve configured it in code."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://davidjoliver86.github.io/posts/part-2-newegg/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://davidjoliver86.github.io/assets/style.css" />
+
+<link rel="stylesheet" href="https://davidjoliver86.github.io/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="https://davidjoliver86.github.io/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="https://davidjoliver86.github.io/img/favicon.png" />
+
+
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Part 2 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform"/>
+<meta name="twitter:description" content="In this part, we&rsquo;re going to focus on getting a Terraform environment setup. Instead of clicking around in the AWS web console, we&rsquo;re going to be writing declarative config files that will define our &ldquo;infrastructure-as-code&rdquo;. We&rsquo;re going to also make some small changes to our parser from the last part to get it ready to deploy as a Lambda function.
+We&rsquo;re transforming Mars into a habitible planet? I wish. But no, we&rsquo;re just going to be writing code in which we define the AWS resources we want to create, and Terraform will take that code and translate it into AWS API calls such that what&rsquo;s deployed matches how we&rsquo;ve configured it in code."/>
+
+
+
+<meta property="og:title" content="Part 2 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform" />
+<meta property="og:description" content="In this part, we&rsquo;re going to focus on getting a Terraform environment setup. Instead of clicking around in the AWS web console, we&rsquo;re going to be writing declarative config files that will define our &ldquo;infrastructure-as-code&rdquo;. We&rsquo;re going to also make some small changes to our parser from the last part to get it ready to deploy as a Lambda function.
+We&rsquo;re transforming Mars into a habitible planet? I wish. But no, we&rsquo;re just going to be writing code in which we define the AWS resources we want to create, and Terraform will take that code and translate it into AWS API calls such that what&rsquo;s deployed matches how we&rsquo;ve configured it in code." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://davidjoliver86.github.io/posts/part-2-newegg/" />
+<meta property="article:published_time" content="2020-11-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-30T00:00:00+00:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >the musings of mister davido</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/tags">Tags</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/tags">Tags</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">Part 2 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2020-11-30
+        </span>
+
+        
+          
+        
+      
+
+      
+
+
+      
+        <span class="post-read-time"
+          >— 9 min read</span
+        >
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+        
+          <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
+        
+          <a href="https://davidjoliver86.github.io/tags/terraform/">#terraform</a>&nbsp;
+        
+          <a href="https://davidjoliver86.github.io/tags/lambda/">#lambda</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>In this part, we&rsquo;re going to focus on getting a Terraform environment setup. Instead
+of clicking around in the AWS web console, we&rsquo;re going to be writing declarative config
+files that will define our &ldquo;infrastructure-as-code&rdquo;. We&rsquo;re going to also make some
+small changes to our parser from the last part to get it ready to deploy as a Lambda
+function.</p>
+<h2 id="were-transforming-mars-into-a-habitible-planet">We&rsquo;re transforming Mars into a habitible planet?</h2>
+<p>I wish. But no, we&rsquo;re just going to be writing code in which we define the AWS
+resources we want to create, and Terraform will take that code and translate it into
+AWS API calls such that what&rsquo;s deployed matches how we&rsquo;ve configured it in code. This
+being code means that we can treat it as code and reap the benefits. Need to revert
+a change? Concerned about what nosey auditors want to see? Version control. Creating
+a bunch of similar resources? For-loops.</p>
+<h2 id="setting-up-your-terraform-environment">Setting up your Terraform environment</h2>
+<p>Download Terraform CLI from <a href="https://terraform.io">https://terraform.io</a> and extract it, ideally somewhere on
+your PATH. Yes, it&rsquo;s a single binary. The wonders of Golang. :) Next, you&rsquo;ll want to
+setup your AWS credentials. If you haven&rsquo;t already, my preferred practice is to define
+them in your <code>~/.aws/credentials</code> file as such:</p>
+<pre><code>[default]
+aws_access_key_id=&lt;YOUR ACCESS KEY&gt;
+aws_secret_access_key=&lt;YOUR SECRET KEY&gt;
+</code></pre><h2 id="hello-world-of-sorts">Hello world of sorts</h2>
+<p>The first thing you should do is verify that you&rsquo;re able to download the Terraform AWS
+provider. Create a <code>modules.tf</code> file with the following contents:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-hcl" data-lang="hcl"><span style="color:#66d9ef">terraform</span> {
+  <span style="color:#66d9ef">required_providers</span> {
+    aws <span style="color:#f92672">=</span> {
+      source  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hashicorp/aws&#34;</span>
+      version <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;~&gt; 3.0&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>Then run <code>terraform init</code>. If it doesn&rsquo;t error out, you&rsquo;re good to go. Next, we&rsquo;ll
+declare our AWS provider. Also in <code>modules.tf</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-hcl" data-lang="hcl"><span style="color:#66d9ef">provider</span> <span style="color:#e6db74">&#34;aws&#34;</span> {
+  region <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">region</span>
+}
+</code></pre></div><p>Notice that we&rsquo;ve also declared a variable; it&rsquo;s generally a good practice to use
+variables. We&rsquo;ll define that, and some others, in <code>variables.tf</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-hcl" data-lang="hcl"><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;region&#34;</span> {
+  type    <span style="color:#f92672">=</span> <span style="color:#66d9ef">string</span>
+  default <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;us-east-1&#34;</span>
+}
+
+<span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;function_name&#34;</span> {
+  type    <span style="color:#f92672">=</span> <span style="color:#66d9ef">string</span>
+  default <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;newegg-stock-checker&#34;</span>
+}
+
+<span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;function_zipfile_name&#34;</span> {
+  type    <span style="color:#f92672">=</span> <span style="color:#66d9ef">string</span>
+  default <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;newegg.zip&#34;</span>
+}
+</code></pre></div><p>Now let&rsquo;s define the resources we need to create a Lambda function, and then turn our
+stock checker into one.</p>
+<h2 id="okay-whats-this-lambda-function-you-keep-talking-about">Okay, what&rsquo;s this &ldquo;Lambda function&rdquo; you keep talking about?</h2>
+<p>AWS Lambda is a service that allows you to execute code without worrying about having
+to maintain the underlying server. Think &ldquo;functions-as-a-service&rdquo;. It&rsquo;s probably my
+favorite AWS service due to its flexiblity; many popular AWS services can hook into
+Lambda, and it&rsquo;s a crucial part of an event-driven architectures.</p>
+<p>In the case of our stock checker, we can deploy the code and setup an event handler
+to run it on a schedule without having to spin up an EC2 resource and define a cron
+job. And it&rsquo;s likely more efficient from a cost perspective too.</p>
+<h2 id="making-our-stock-checker-a-lambda-function">Making our stock checker a Lambda function</h2>
+<p>AWS Lambda supports many different languages, and each of them has their own process
+to define your function&rsquo;s entrypoint. In the case of Python, we&rsquo;ll be adding a
+<code>lambda_handler(event, context)</code> function. <code>event</code> is usually a dictionary, containing
+arbitrary data from the event that invoked it, and <code>context</code> is an object containing
+metadata about the execution context.</p>
+<p>In our case, we can basically copy the <code>if __name__ == '__main__'</code> into this handler:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lambda_handler</span>(event, context):
+    parser <span style="color:#f92672">=</span> NeweggParser(event[<span style="color:#e6db74">&#34;url&#34;</span>])
+    parser<span style="color:#f92672">.</span>fetch()
+    <span style="color:#66d9ef">print</span>(parser<span style="color:#f92672">.</span>get_items_in_stock())
+</code></pre></div><p>Notice that we moved the <code>base_url</code> argument of the <code>NeweggParser</code> into an attribute
+of the event. When we define the &ldquo;cron&rdquo; aspect of this later, we can pass in the URL
+we want to check as part of whatever arbitrary JSON we want to pass into the <code>event</code>.
+So even though we&rsquo;re stock checking GTX 3070s, maybe I might want a Radeon instead?</p>
+<h2 id="im-afraid-i-cant-let-you-do-that">I&rsquo;m afraid I can&rsquo;t let you do that&hellip;</h2>
+<p>We&rsquo;ll now need to define an IAM role for this function in order to allow it to fully
+execute. This will allow us to define precisely how it can interact with other AWS
+services. Following the principle of least privilege, if we don&rsquo;t explicitly grant
+permissions to do something, they&rsquo;re not allowed.</p>
+<p>All Lambda functions require a minimal set of permissions for them to log their
+activity. This comes in the form of an AWS-managed policy that we can attach to a role.</p>
+<p>What we&rsquo;ll also need to do is define that the role itself is one for use with AWS
+Lambda. So let&rsquo;s write our first Terraform to create our role, in an <code>iam.tf</code> file:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-hcl" data-lang="hcl"><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_iam_policy_document&#34; &#34;lambda_trust_policy&#34;</span> {
+  <span style="color:#66d9ef">statement</span> {
+    actions <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;sts:AssumeRole&#34;</span>]
+    <span style="color:#66d9ef">principals</span> {
+      type        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Service&#34;</span>
+      identifiers <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;lambda.amazonaws.com&#34;</span>]
+    }
+  }
+}
+
+<span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role&#34; &#34;newegg_stock_checker&#34;</span> {
+  name               <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;newegg-stock-checker&#34;</span>
+  assume_role_policy <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">aws_iam_policy_document</span>.<span style="color:#66d9ef">lambda_trust_policy</span>.<span style="color:#66d9ef">json</span>
+}
+
+<span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_role_policy_attachment&#34; &#34;newegg_stock_checker_base&#34;</span> {
+  role       <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_iam_role</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">id</span>
+  policy_arn <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&#34;</span>
+}
+</code></pre></div><p>So a couple of practices should have stood out from this example:</p>
+<p>First of all, normally an IAM policy document is just a JSON string. By using the
+<code>aws_iam_policy_document</code> resource instead, we have a well-defined interface that can
+generate this JSON for us. I&rsquo;m not alone in speaking from past experience having been
+bitten by simple JSON formatting errors before.</p>
+<p>Second, note that we&rsquo;re referring to the exported <code>id</code> element in our role policy
+attachment. Rather than having to repeatedly hardcode the name of the role in any
+resource that will reference it, it&rsquo;s a far better practice to rely on attributes
+that can be exported from it. Use <code>id</code> if possible. The Terraform docs are a great
+resource on what you can utilize. But it gets better too - we can cross-reference it
+in other files as well, and that&rsquo;s exactly what we&rsquo;re going to do with our Lambda
+function.</p>
+<h2 id="creating-the-function">Creating the function</h2>
+<p>Using our variables, and our role, we can create our function in a <code>lambda.tf</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-hcl" data-lang="hcl"><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_function&#34; &#34;newegg_stock_checker&#34;</span> {
+  function_name    <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">function_name</span>
+  filename         <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">function_zipfile_name</span>
+  source_code_hash <span style="color:#f92672">=</span> <span style="color:#66d9ef">filebase64sha256</span>(<span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">function_zipfile_name</span>)
+  role             <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_iam_role</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+  handler          <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;newegg.lambda_handler&#34;</span>
+  runtime          <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;python3.8&#34;</span>
+}
+</code></pre></div><p>If you&rsquo;re paying attention to what I&rsquo;m calling the file, notice that I&rsquo;m naming them
+after the AWS service they represent. This is not a requirement, but an opinionated
+recommendation. Let&rsquo;s take note of a few things:</p>
+<ul>
+<li>The deployment package is expected to be a zip file. For a simple function without
+any third-party libraries, it&rsquo;s as simple as zipping up our <code>newegg.py</code> from earlier.</li>
+<li>It&rsquo;s expecting to find the zipfile in the same folder as all the <code>.tf</code> files. We can
+alter this if needed, and in a larger-scale deployment, I would prefer using S3, but
+this is fine for our example.</li>
+<li>Note that the handler is in the form of <code>&lt;module.handler_function&gt;</code>. So if we called
+this <code>amazon.py</code> to check Amazon, it&rsquo;d be <code>amazon.lambda_handler</code>. And you could
+actually call <code>lambda_handler</code> whatever you want, but I prefer to just stick with that
+by convention.</li>
+</ul>
+<h2 id="okay-lets-get-terraforming">Okay.. let&rsquo;s get terraforming</h2>
+<p>We&rsquo;re now ready to run Terraform and create our function and IAM role. And the beauty
+of Terraform is that roughly 99% of the time, the dependency ordering just works. So
+we don&rsquo;t <em>have</em> to explicitly tell it to create the role first, then the function. It
+usually just knows. And in the rare event that it doesn&rsquo;t, you can override it.</p>
+<p>My preferred method to run Terraform is to generate a plan first, then apply the plan
+only if I&rsquo;m satisfied with the changes. So let&rsquo;s run <code>terraform plan -out tf.plan</code>&hellip;</p>
+<pre><code>An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_iam_role.newegg_stock_checker will be created
+  + resource &quot;aws_iam_role&quot; &quot;newegg_stock_checker&quot; {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = &quot;sts:AssumeRole&quot;
+                      + Effect    = &quot;Allow&quot;
+                      + Principal = {
+                          + Service = &quot;lambda.amazonaws.com&quot;
+                        }
+                      + Sid       = &quot;&quot;
+                    },
+                ]
+              + Version   = &quot;2012-10-17&quot;
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = &quot;newegg-stock-checker&quot;
+      + path                  = &quot;/&quot;
+      + unique_id             = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.newegg_stock_checker_base will be created
+  + resource &quot;aws_iam_role_policy_attachment&quot; &quot;newegg_stock_checker_base&quot; {
+      + id         = (known after apply)
+      + policy_arn = &quot;arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole&quot;
+      + role       = (known after apply)
+    }
+
+  # aws_lambda_function.newegg_stock_checker will be created
+  + resource &quot;aws_lambda_function&quot; &quot;newegg_stock_checker&quot; {
+      + arn                            = (known after apply)
+      + filename                       = &quot;newegg.zip&quot;
+      + function_name                  = &quot;newegg-stock-checker&quot;
+      + handler                        = &quot;newegg.lambda_handler&quot;
+      + id                             = (known after apply)
+      + invoke_arn                     = (known after apply)
+      + last_modified                  = (known after apply)
+      + memory_size                    = 128
+      + publish                        = false
+      + qualified_arn                  = (known after apply)
+      + reserved_concurrent_executions = -1
+      + role                           = (known after apply)
+      + runtime                        = &quot;python3.8&quot;
+      + signing_job_arn                = (known after apply)
+      + signing_profile_version_arn    = (known after apply)
+      + source_code_hash               = &quot;OglgTDSdxTM/32aDilEJlSzYmTLT/ubrEg3sWSe9jmw=&quot;
+      + source_code_size               = (known after apply)
+      + timeout                        = 3
+      + version                        = (known after apply)
+
+      + tracing_config {
+          + mode = (known after apply)
+        }
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: tf.plan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply &quot;tf.plan&quot;
+</code></pre><p>Looks good. Let&rsquo;s apply that plan now.</p>
+<pre><code>aws_iam_role.newegg_stock_checker: Creating...
+aws_iam_role.newegg_stock_checker: Creation complete after 1s [id=newegg-stock-checker]
+aws_iam_role_policy_attachment.newegg_stock_checker_base: Creating...
+aws_lambda_function.newegg_stock_checker: Creating...
+aws_iam_role_policy_attachment.newegg_stock_checker_base: Creation complete after 1s [id=newegg-stock-checker-20201202055221258600000001]
+aws_lambda_function.newegg_stock_checker: Still creating... [10s elapsed]
+aws_lambda_function.newegg_stock_checker: Creation complete after 16s [id=newegg-stock-checker]
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed
+</code></pre><p>Alright - now let&rsquo;s check it out.</p>
+<h2 id="testing-our-function">Testing our function</h2>
+<p>Now we can start clicking around the AWS console. Go to Lambda, and you should see your
+function, complete with its code. Click on &ldquo;Test&rdquo; to test it, aaand.. nope.</p>
+<p><img src="/img/lambda_test_event.png" alt="Lambda test event"></p>
+<p>Fortunately, this is exactly what we want. This is where you define what gets passed in
+into the <code>event</code> argument of the <code>lambda_handler</code>. Notice that within the handler, it&rsquo;s
+looking for <code>event[&quot;url&quot;]</code>? So here&rsquo;s where we can create a new test event with a simple
+JSON object with the URL we tried last time:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;url&#34;</span>: <span style="color:#e6db74">&#34;https://www.newegg.com/p/pl?d=gtx+3070&amp;N=100007709&amp;isdeptsrh=1&amp;PageSize=96&#34;</span>
+}
+</code></pre></div><p>Create, test, and&hellip; 💥</p>
+<p><img src="/img/lambda_results.png" alt="Lambda results"></p>
+<p>So the good news is we now have a working Lambda function that we created entirely
+in Terraform (okay, and Python too). The bad news is - they&rsquo;re still out of stock.
+Well, hopefully while we wait for stock to replenish, we can start adding more
+functionality down the line. We can set it to run automatically, and email us whenever
+there&rsquo;s a stock change. We&rsquo;ll do that in part 3.</p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >Read other posts</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+            
+              <span class="button next">
+                <a href="https://davidjoliver86.github.io/posts/part-1-newegg/">
+                  <span class="button__text">Part 1 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >the musings of mister davido</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span
+          >© 2020 Powered by
+          <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span
+        >
+        <span
+          >Theme created by
+          <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span
+        >
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://davidjoliver86.github.io/assets/main.js"></script>
+<script src="https://davidjoliver86.github.io/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

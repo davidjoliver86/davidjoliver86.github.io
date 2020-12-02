@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>python on The musings of Mister Davido</title>
+    <title>lambda on The musings of Mister Davido</title>
     
     
     
-    <link>https://davidjoliver86.github.io/tags/python/</link>
-    <description>Recent content in python on The musings of Mister Davido</description>
+    <link>https://davidjoliver86.github.io/tags/lambda/</link>
+    <description>Recent content in lambda on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 30 Nov 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://davidjoliver86.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://davidjoliver86.github.io/tags/lambda/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -30,27 +30,6 @@
         
           In this part, we&amp;rsquo;re going to focus on getting a Terraform environment setup. Instead of clicking around in the AWS web console, we&amp;rsquo;re going to be writing declarative config files that will define our &amp;ldquo;infrastructure-as-code&amp;rdquo;. We&amp;rsquo;re going to also make some small changes to our parser from the last part to get it ready to deploy as a Lambda function.
 We&amp;rsquo;re transforming Mars into a habitible planet? I wish. But no, we&amp;rsquo;re just going to be writing code in which we define the AWS resources we want to create, and Terraform will take that code and translate it into AWS API calls such that what&amp;rsquo;s deployed matches how we&amp;rsquo;ve configured it in code.
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>Part 1 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
-      <link>https://davidjoliver86.github.io/posts/part-1-newegg/</link>
-      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://davidjoliver86.github.io/posts/part-1-newegg/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          In this series, we&amp;rsquo;re going to create a &amp;ldquo;stock checker&amp;rdquo; in Python, and then later on, we&amp;rsquo;re going to deploy it on AWS. We&amp;rsquo;re not going to spin up any EC2 instances either; this is going to be running as a &amp;ldquo;serverless&amp;rdquo; bot. And we&amp;rsquo;re not going to need to have to do much, if any, clicking and pointing in the AWS console, thanks to the power of Terraform.
-Stock checker?
           
         
         </description>

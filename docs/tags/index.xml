@@ -9,7 +9,7 @@
     <description>Recent content in Tags on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 30 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -17,7 +17,7 @@
     <item>
       <title>aws</title>
       <link>https://davidjoliver86.github.io/tags/aws/</link>
-      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/aws/</guid>
       <description>
@@ -35,11 +35,51 @@
     </item>
     
     <item>
+      <title>lambda</title>
+      <link>https://davidjoliver86.github.io/tags/lambda/</link>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/tags/lambda/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          
+          
+        
+        </description>
+    </item>
+    
+    <item>
       <title>python</title>
       <link>https://davidjoliver86.github.io/tags/python/</link>
-      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/python/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>terraform</title>
+      <link>https://davidjoliver86.github.io/tags/terraform/</link>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/tags/terraform/</guid>
       <description>
         
           
