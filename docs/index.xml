@@ -9,13 +9,34 @@
     <description>Recent content on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 30 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Part 2 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <title>Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-3-newegg/</link>
+      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/posts/part-3-newegg/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          We&amp;rsquo;ve got a working Lambda function now, so let&amp;rsquo;s start adding in the other pieces of the AWS puzzle to turn this into a lean, mean, automated stock-checking machine.
+How often should we run it? Very good question. For a hot product that may literally last a few minutes on the &amp;ldquo;shelf&amp;rdquo;, it sounds like we&amp;rsquo;d want to check pretty frequently. Ideally within timeframes of a minute. But there&amp;rsquo;s one all-important thing to consider that holds true more than anything else in AWS, or cloud computing in general.
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>Part 2/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
       <link>https://davidjoliver86.github.io/posts/part-2-newegg/</link>
       <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
       
@@ -57,7 +78,7 @@ In 2009, I started my career as a data analyst at an up-and-coming startup calle
     </item>
     
     <item>
-      <title>Part 1 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <title>Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
       <link>https://davidjoliver86.github.io/posts/part-1-newegg/</link>
       <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
       

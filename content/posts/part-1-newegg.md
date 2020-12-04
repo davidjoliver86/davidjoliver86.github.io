@@ -1,5 +1,5 @@
 ---
-title: "Part 1 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform"
+title: "Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform"
 date: 2020-11-29
 draft: false
 tags:
