@@ -9,7 +9,7 @@
     <description>Recent content in Tags on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 07 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -17,7 +17,7 @@
     <item>
       <title>aws</title>
       <link>https://davidjoliver86.github.io/tags/aws/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/aws/</guid>
       <description>
@@ -37,7 +37,7 @@
     <item>
       <title>cloudwatch</title>
       <link>https://davidjoliver86.github.io/tags/cloudwatch/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/cloudwatch/</guid>
       <description>
@@ -57,7 +57,7 @@
     <item>
       <title>lambda</title>
       <link>https://davidjoliver86.github.io/tags/lambda/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/lambda/</guid>
       <description>
@@ -77,9 +77,49 @@
     <item>
       <title>python</title>
       <link>https://davidjoliver86.github.io/tags/python/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/python/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>s3</title>
+      <link>https://davidjoliver86.github.io/tags/s3/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/tags/s3/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>terraform</title>
+      <link>https://davidjoliver86.github.io/tags/terraform/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/tags/terraform/</guid>
       <description>
         
           
@@ -100,26 +140,6 @@
       <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/sns/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>terraform</title>
-      <link>https://davidjoliver86.github.io/tags/terraform/</link>
-      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://davidjoliver86.github.io/tags/terraform/</guid>
       <description>
         
           

@@ -9,10 +9,31 @@
     <description>Recent content in Posts on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 07 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-4-newegg/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/posts/part-4-newegg/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Alright.. the home stretch. At the end of the last part, we mentioned that we need a stateful data store for our Lambda function, otherwise it would keep wanting to send alerts every minute that there&amp;rsquo;s no stock, and that&amp;rsquo;s not very useful. The stateful data store we&amp;rsquo;re going to use is S3.
+Of course, you don&amp;rsquo;t have to use S3 - you could spin up a DynamoDB or RDS instance, and there&amp;rsquo;s the relatively new EFS on Lambda which I haven&amp;rsquo;t personally tested, but for our use case - storing an arbitrary file - S3 is my pick.
+          
+        
+        </description>
+    </item>
     
     <item>
       <title>Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>

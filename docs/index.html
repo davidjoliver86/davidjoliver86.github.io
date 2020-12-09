@@ -55,7 +55,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://davidjoliver86.github.io/" />
-<meta property="og:updated_time" content="2020-12-03T00:00:00+00:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
+<meta property="og:updated_time" content="2020-12-07T00:00:00+00:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
 
 
 
@@ -159,6 +159,57 @@
   
 
   <div class="posts">
+    
+    <div class="post on-list">
+      <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-4-newegg/">Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
+      <div class="post-meta">
+        
+          <span class="post-date">
+            2020-12-07
+          </span>
+
+          
+        
+
+        
+
+        
+          <span class="post-read-time">— 8 min read</span>
+        
+      </div>
+
+      
+        <span class="post-tags">
+          
+            <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+          
+            <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
+          
+            <a href="https://davidjoliver86.github.io/tags/terraform/">#terraform</a>&nbsp;
+          
+            <a href="https://davidjoliver86.github.io/tags/lambda/">#lambda</a>&nbsp;
+          
+            <a href="https://davidjoliver86.github.io/tags/cloudwatch/">#cloudwatch</a>&nbsp;
+          
+            <a href="https://davidjoliver86.github.io/tags/s3/">#s3</a>&nbsp;
+          
+        </span>
+      
+
+      
+
+      <div class="post-content">
+        
+          
+            Alright.. the home stretch. At the end of the last part, we mentioned that we need a stateful data store for our Lambda function, otherwise it would keep wanting to send alerts every minute that there&rsquo;s no stock, and that&rsquo;s not very useful. The stateful data store we&rsquo;re going to use is S3.
+Of course, you don&rsquo;t have to use S3 - you could spin up a DynamoDB or RDS instance, and there&rsquo;s the relatively new EFS on Lambda which I haven&rsquo;t personally tested, but for our use case - storing an arbitrary file - S3 is my pick.
+          
+        
+      </div>
+      
+        <div><a class="read-more button" href="/posts/part-4-newegg/">Read more →</a></div>
+      
+    </div>
     
     <div class="post on-list">
       <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-3-newegg/">Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
