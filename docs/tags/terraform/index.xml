@@ -9,10 +9,30 @@
     <description>Recent content in terraform on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 07 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 09 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/tags/terraform/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Post-mortem and bonus: serverless Newegg stock checker</title>
+      <link>https://davidjoliver86.github.io/posts/postmortem-newegg/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/posts/postmortem-newegg/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          Quick update - in the last approx. 24-hour period since I deployed my stock checker to check on GTX 3070 stock, I actually did get a few hits back. Unfortunately, most of those wound up being combo packs that included a motherboard. Many of them were Intel motherboards, whereas I&amp;rsquo;m actually targeting a Ryzen build. Oh, and they all went back out of stock within about 2 minutes. So yeah - 60-second granularity can make the difference between seeing an item go in and out of stock, and never getting to see the item even hit the virtual shelf!
+          
+        
+        </description>
+    </item>
     
     <item>
       <title>Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
