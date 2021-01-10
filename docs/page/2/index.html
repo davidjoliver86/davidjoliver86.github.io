@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+	<meta name="generator" content="Hugo 0.79.0" />
     
       <title>
-        cloudwatch ::
         The musings of Mister Davido
       </title>
     
@@ -18,7 +18,7 @@
   content=""
 />
 <meta name="robots" content="noodp" />
-<link rel="canonical" href="https://davidjoliver86.github.io/tags/cloudwatch/" />
+<link rel="canonical" href="https://davidjoliver86.github.io/" />
 
 
 
@@ -46,20 +46,20 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="cloudwatch"/>
+<meta name="twitter:title" content="The musings of Mister Davido"/>
 <meta name="twitter:description" content=""/>
 
 
 
-<meta property="og:title" content="cloudwatch" />
+<meta property="og:title" content="The musings of Mister Davido" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://davidjoliver86.github.io/tags/cloudwatch/" />
-<meta property="og:updated_time" content="2020-12-07T00:00:00+00:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
+<meta property="og:url" content="https://davidjoliver86.github.io/" />
+<meta property="og:updated_time" content="2021-01-09T12:56:58-08:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
 
 
 
-<link rel="alternate" type="application/rss+xml" href="/tags/cloudwatch/index.xml" title="The musings of Mister Davido" />
+<link rel="alternate" type="application/rss+xml" href="/index.xml" title="The musings of Mister Davido" />
 
 
 
@@ -163,124 +163,71 @@
 
       <div class="content">
         
+  
+  
+
+  
+  
+    
+  
+  
+
+  
+
   <div class="posts">
     
-      <div class="post on-list">
-        <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-4-newegg/">Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
-        <div class="post-meta">
-          
-            <span class="post-date">
-              2020-12-07
-            </span>
-
-            
-          
-          
-
-
-          
-            <span class="post-read-time"
-              >— 8 min read</span
-            >
-          
-        </div>
-
+    <div class="post on-list">
+      <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-1-newegg/">Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
+      <div class="post-meta">
         
-          <span class="post-tags">
-            
-              <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/terraform/">#terraform</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/lambda/">#lambda</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/cloudwatch/">#cloudwatch</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/s3/">#s3</a>&nbsp;
-            
+          <span class="post-date">
+            2020-11-29
           </span>
+
+          
         
 
         
 
-        <div class="post-content">
-          
-            
-              Alright.. the home stretch. At the end of the last part, we mentioned that we need a stateful data store for our Lambda function, otherwise it would keep wanting to send alerts every minute that there&rsquo;s no stock, and that&rsquo;s not very useful. The stateful data store we&rsquo;re going to use is S3.
-Of course, you don&rsquo;t have to use S3 - you could spin up a DynamoDB or RDS instance, and there&rsquo;s the relatively new EFS on Lambda which I haven&rsquo;t personally tested, but for our use case - storing an arbitrary file - S3 is my pick.
-            
-          
-        </div>
         
-          <div>
-            <a class="read-more button" href="/posts/part-4-newegg/"
-              >Read more →</a
-            >
-          </div>
+          <span class="post-read-time">— 5 min read</span>
         
       </div>
-    
-      <div class="post on-list">
-        <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-3-newegg/">Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
-        <div class="post-meta">
-          
-            <span class="post-date">
-              2020-12-03
-            </span>
 
-            
+      
+        <span class="post-tags">
           
+            <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
           
+            <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
+          
+        </span>
+      
 
+      
 
-          
-            <span class="post-read-time"
-              >— 9 min read</span
-            >
-          
-        </div>
-
+      <div class="post-content">
         
-          <span class="post-tags">
-            
-              <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/terraform/">#terraform</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/lambda/">#lambda</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/cloudwatch/">#cloudwatch</a>&nbsp;
-            
-              <a href="https://davidjoliver86.github.io/tags/sns/">#sns</a>&nbsp;
-            
-          </span>
-        
-
-        
-
-        <div class="post-content">
           
-            
-              We&rsquo;ve got a working Lambda function now, so let&rsquo;s start adding in the other pieces of the AWS puzzle to turn this into a lean, mean, automated stock-checking machine.
-How often should we run it? Very good question. For a hot product that may literally last a few minutes on the &ldquo;shelf&rdquo;, it sounds like we&rsquo;d want to check pretty frequently. Ideally within timeframes of a minute. But there&rsquo;s one all-important thing to consider that holds true more than anything else in AWS, or cloud computing in general.
-            
+            In this series, we&rsquo;re going to create a &ldquo;stock checker&rdquo; in Python, and then later on, we&rsquo;re going to deploy it on AWS. We&rsquo;re not going to spin up any EC2 instances either; this is going to be running as a &ldquo;serverless&rdquo; bot. And we&rsquo;re not going to need to have to do much, if any, clicking and pointing in the AWS console, thanks to the power of Terraform.
+Stock checker?
           
-        </div>
-        
-          <div>
-            <a class="read-more button" href="/posts/part-3-newegg/"
-              >Read more →</a
-            >
-          </div>
         
       </div>
+      
+        <div><a class="read-more button" href="/posts/part-1-newegg/">Read more →</a></div>
+      
+    </div>
     
     <div class="pagination">
   <div class="pagination__buttons">
+    
+      <span class="button previous">
+        <a href="/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Newer posts</span>
+        </a>
+      </span>
     
     
   </div>

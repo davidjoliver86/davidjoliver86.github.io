@@ -3,7 +3,7 @@
   <head>
     
       <title>
-        cloudwatch ::
+        aws ::
         The musings of Mister Davido
       </title>
     
@@ -18,7 +18,7 @@
   content=""
 />
 <meta name="robots" content="noodp" />
-<link rel="canonical" href="https://davidjoliver86.github.io/tags/cloudwatch/" />
+<link rel="canonical" href="https://davidjoliver86.github.io/tags/aws/" />
 
 
 
@@ -46,20 +46,20 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="cloudwatch"/>
+<meta name="twitter:title" content="aws"/>
 <meta name="twitter:description" content=""/>
 
 
 
-<meta property="og:title" content="cloudwatch" />
+<meta property="og:title" content="aws" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://davidjoliver86.github.io/tags/cloudwatch/" />
-<meta property="og:updated_time" content="2020-12-07T00:00:00+00:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
+<meta property="og:url" content="https://davidjoliver86.github.io/tags/aws/" />
+<meta property="og:updated_time" content="2021-01-09T12:56:58-08:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
 
 
 
-<link rel="alternate" type="application/rss+xml" href="/tags/cloudwatch/index.xml" title="The musings of Mister Davido" />
+<link rel="alternate" type="application/rss+xml" href="/tags/aws/index.xml" title="The musings of Mister Davido" />
 
 
 
@@ -164,6 +164,104 @@
       <div class="content">
         
   <div class="posts">
+    
+      <div class="post on-list">
+        <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/s3-versioning-gotcha/">The hidden costs of S3 versioning</a></h1>
+        <div class="post-meta">
+          
+            <span class="post-date">
+              2021-01-09
+            </span>
+
+            
+          
+          
+
+
+          
+            <span class="post-read-time"
+              >— 3 min read</span
+            >
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+              <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+            
+              <a href="https://davidjoliver86.github.io/tags/s3/">#s3</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+            
+              I&rsquo;m going to start by proposing a riddle:
+ How big is my S3 bucket?
+ The answer to that can be surprisingly ambiguous. The naive approach is simply to iterate over all the objects in your bucket in order to sum up the sizes of each of its objects. And that works perfectly fine if you have something on the order of thousands, or perhaps tens of thousands of objects in a bucket.
+            
+          
+        </div>
+        
+          <div>
+            <a class="read-more button" href="/posts/s3-versioning-gotcha/"
+              >Read more →</a
+            >
+          </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/postmortem-newegg/">Post-mortem and bonus: serverless Newegg stock checker</a></h1>
+        <div class="post-meta">
+          
+            <span class="post-date">
+              2020-12-09
+            </span>
+
+            
+          
+          
+
+
+          
+            <span class="post-read-time"
+              >— 4 min read</span
+            >
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+              <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+            
+              <a href="https://davidjoliver86.github.io/tags/terraform/">#terraform</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+            
+              Quick update - in the last approx. 24-hour period since I deployed my stock checker to check on GTX 3070 stock, I actually did get a few hits back. Unfortunately, most of those wound up being combo packs that included a motherboard. Many of them were Intel motherboards, whereas I&rsquo;m actually targeting a Ryzen build. Oh, and they all went back out of stock within about 2 minutes. So yeah - 60-second granularity can make the difference between seeing an item go in and out of stock, and never getting to see the item even hit the virtual shelf!
+            
+          
+        </div>
+        
+          <div>
+            <a class="read-more button" href="/posts/postmortem-newegg/"
+              >Read more →</a
+            >
+          </div>
+        
+      </div>
     
       <div class="post on-list">
         <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-4-newegg/">Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
@@ -279,8 +377,117 @@ How often should we run it? Very good question. For a hot product that may liter
         
       </div>
     
+      <div class="post on-list">
+        <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-2-newegg/">Part 2/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
+        <div class="post-meta">
+          
+            <span class="post-date">
+              2020-11-30
+            </span>
+
+            
+          
+          
+
+
+          
+            <span class="post-read-time"
+              >— 9 min read</span
+            >
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+              <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+            
+              <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
+            
+              <a href="https://davidjoliver86.github.io/tags/terraform/">#terraform</a>&nbsp;
+            
+              <a href="https://davidjoliver86.github.io/tags/lambda/">#lambda</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+            
+              In this part, we&rsquo;re going to focus on getting a Terraform environment setup. Instead of clicking around in the AWS web console, we&rsquo;re going to be writing declarative config files that will define our &ldquo;infrastructure-as-code&rdquo;. We&rsquo;re going to also make some small changes to our parser from the last part to get it ready to deploy as a Lambda function.
+We&rsquo;re transforming Mars into a habitible planet? I wish. But no, we&rsquo;re just going to be writing code in which we define the AWS resources we want to create, and Terraform will take that code and translate it into AWS API calls such that what&rsquo;s deployed matches how we&rsquo;ve configured it in code.
+            
+          
+        </div>
+        
+          <div>
+            <a class="read-more button" href="/posts/part-2-newegg/"
+              >Read more →</a
+            >
+          </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title"><a href="https://davidjoliver86.github.io/posts/part-1-newegg/">Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</a></h1>
+        <div class="post-meta">
+          
+            <span class="post-date">
+              2020-11-29
+            </span>
+
+            
+          
+          
+
+
+          
+            <span class="post-read-time"
+              >— 5 min read</span
+            >
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+              <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+            
+              <a href="https://davidjoliver86.github.io/tags/python/">#python</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+            
+              In this series, we&rsquo;re going to create a &ldquo;stock checker&rdquo; in Python, and then later on, we&rsquo;re going to deploy it on AWS. We&rsquo;re not going to spin up any EC2 instances either; this is going to be running as a &ldquo;serverless&rdquo; bot. And we&rsquo;re not going to need to have to do much, if any, clicking and pointing in the AWS console, thanks to the power of Terraform.
+Stock checker?
+            
+          
+        </div>
+        
+          <div>
+            <a class="read-more button" href="/posts/part-1-newegg/"
+              >Read more →</a
+            >
+          </div>
+        
+      </div>
+    
     <div class="pagination">
   <div class="pagination__buttons">
+    
+      <span class="button previous">
+        <a href="/tags/aws/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Newer posts</span>
+        </a>
+      </span>
     
     
   </div>

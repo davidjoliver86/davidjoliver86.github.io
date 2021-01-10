@@ -9,10 +9,32 @@
     <description>Recent content on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 09 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 Jan 2021 12:56:58 -0800</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>The hidden costs of S3 versioning</title>
+      <link>https://davidjoliver86.github.io/posts/s3-versioning-gotcha/</link>
+      <pubDate>Sat, 09 Jan 2021 12:56:58 -0800</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/posts/s3-versioning-gotcha/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          I&amp;rsquo;m going to start by proposing a riddle:
+ How big is my S3 bucket?
+ The answer to that can be surprisingly ambiguous. The naive approach is simply to iterate over all the objects in your bucket in order to sum up the sizes of each of its objects. And that works perfectly fine if you have something on the order of thousands, or perhaps tens of thousands of objects in a bucket.
+          
+        
+        </description>
+    </item>
     
     <item>
       <title>Post-mortem and bonus: serverless Newegg stock checker</title>

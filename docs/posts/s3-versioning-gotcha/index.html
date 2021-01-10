@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>
+        The hidden costs of S3 versioning ::
+        The musings of Mister Davido
+      </title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="I&amp;rsquo;m going to start by proposing a riddle:
+ How big is my S3 bucket?
+ The answer to that can be surprisingly ambiguous. The naive approach is simply to iterate over all the objects in your bucket in order to sum up the sizes of each of its objects. And that works perfectly fine if you have something on the order of thousands, or perhaps tens of thousands of objects in a bucket."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://davidjoliver86.github.io/posts/s3-versioning-gotcha/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://davidjoliver86.github.io/assets/style.css" />
+
+<link rel="stylesheet" href="https://davidjoliver86.github.io/style.css" />
+
+
+<link
+  rel="apple-touch-icon-precomposed"
+  sizes="144x144"
+  href="https://davidjoliver86.github.io/img/apple-touch-icon-144-precomposed.png"
+/>
+<link rel="shortcut icon" href="https://davidjoliver86.github.io/img/favicon.png" />
+
+
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Italic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Regular.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Medium.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-MediumItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-Bold.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+<link href="https://davidjoliver86.github.io/assets/fonts/Inter-BoldItalic.woff2" rel="preload" type="font/woff2" as="font" crossorigin="">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="The hidden costs of S3 versioning"/>
+<meta name="twitter:description" content="I&rsquo;m going to start by proposing a riddle:
+ How big is my S3 bucket?
+ The answer to that can be surprisingly ambiguous. The naive approach is simply to iterate over all the objects in your bucket in order to sum up the sizes of each of its objects. And that works perfectly fine if you have something on the order of thousands, or perhaps tens of thousands of objects in a bucket."/>
+
+
+
+<meta property="og:title" content="The hidden costs of S3 versioning" />
+<meta property="og:description" content="I&rsquo;m going to start by proposing a riddle:
+ How big is my S3 bucket?
+ The answer to that can be surprisingly ambiguous. The naive approach is simply to iterate over all the objects in your bucket in order to sum up the sizes of each of its objects. And that works perfectly fine if you have something on the order of thousands, or perhaps tens of thousands of objects in a bucket." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://davidjoliver86.github.io/posts/s3-versioning-gotcha/" />
+<meta property="article:published_time" content="2021-01-09T12:56:58-08:00" />
+<meta property="article:modified_time" content="2021-01-09T12:56:58-08:00" /><meta property="og:site_name" content="The musings of Mister Davido" />
+
+
+
+
+
+
+  </head>
+  <body class="dark-theme">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >the musings of mister davido</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/mister_davido">Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/davidjoliver86">GitHub</a></li>
+        
+      
+        
+          <li><a href="/tags">Tags</a></li>
+        
+      
+      
+      
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/mister_davido">Twitter</a></li>
+      
+    
+      
+        <li><a href="https://github.com/davidjoliver86">GitHub</a></li>
+      
+    
+      
+        <li><a href="/tags">Tags</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg
+  class="theme-toggler"
+  width="24"
+  height="24"
+  viewBox="0 0 48 48"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"
+  />
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  
+  
+
+  <div class="post">
+    <h1 class="post-title">The hidden costs of S3 versioning</h1>
+    <div class="post-meta">
+      
+        <span class="post-date">
+          2021-01-09
+        </span>
+
+        
+          
+        
+      
+
+      
+
+
+      
+        <span class="post-read-time"
+          >— 3 min read</span
+        >
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          <a href="https://davidjoliver86.github.io/tags/aws/">#aws</a>&nbsp;
+        
+          <a href="https://davidjoliver86.github.io/tags/s3/">#s3</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+      <p>I&rsquo;m going to start by proposing a riddle:</p>
+<blockquote>
+<p>How big is my S3 bucket?</p>
+</blockquote>
+<p>The answer to that can be surprisingly ambiguous. The naive approach is simply to
+iterate over all the objects in your bucket in order to sum up the sizes of each of
+its objects. And that works perfectly fine if you have something on the order of
+thousands, or perhaps tens of thousands of objects in a bucket. But should you really
+need to do this? If you wanted to see how much space a folder in a Unix environment
+uses, the <code>du</code> manpage doesn&rsquo;t tell you &ldquo;eh, parse the output of <code>ls -l</code> and add it
+up yourself&rdquo;.</p>
+<p>So - no, you don&rsquo;t really need to sum this up yourself. The &lsquo;Metrics&rsquo; tab in the S3
+console exposes the CloudWatch metric that already computes this for you. So, problem
+solved, right? Blog post over?</p>
+<p>It depends.</p>
+<h2 id="the-wonders-and-woes-of-versioning">The wonders and woes of versioning</h2>
+<p>Versioning simply allows Amazon to store multiple variants of the same object in a bucket.
+You can preserve and restore old versions at any time, which is a wonderful preventative
+measure against unintended user or application error. Every object in your bucket has
+a random version hash. If you overwrite an object in your bucket, a new version is created
+with a different hash. This becomes the &ldquo;current&rdquo; version, and all other versions become
+&ldquo;noncurrent&rdquo;. Also, if you &ldquo;delete&rdquo; an object, a new version of that object acts as a
+&ldquo;delete marker&rdquo; and becomes the current version - but this &ldquo;delete marker&rdquo; can, itself,
+be deleted to effectively &ldquo;undelete&rdquo; the object.</p>
+<h2 id="that-doesnt-sound-bad-at-all-so-whats-the-problem-with-versioning">That doesn&rsquo;t sound bad at all.. so what&rsquo;s the problem with versioning?</h2>
+<p>I was on a Slack call with my manager where we were going over some of the S3 buckets
+across our AWS estate. We were wanting to determine how much data we were storing across
+our buckets, and for some of our buckets, we were running into numbers that raised a few
+serious red flags.</p>
+<p>There are some S3 buckets that are being used as a &ldquo;file mirror&rdquo; - effectively, an EC2
+instance would have a cron job that runs <code>aws s3 sync</code> with its home folder. This was
+destined toward an S3 bucket that has versioning. When we were determining how much
+storage was used in that bucket, we were able to sum up each item, and it was on the
+order of about 30 gigabytes. Pretty much what we were expecting. Cost Explorer and
+CloudWatch, however, painted a vastly different picture&hellip; 15 <em>TERABYTES</em>.</p>
+<p>Sure enough, we weren&rsquo;t being charged for the 30 gigabytes that we had on the surface.
+We were being charged for the 15 terabytes. And the culprit that wound up using 14.97
+terabytes? Versions. Old versions over the years.</p>
+<h2 id="always-have-a-lifecycle-rule">Always have a lifecycle rule!</h2>
+<p>By having a lifecycle rule in place, you can control the buildup of years' of stale
+versions adding on to an ever-growing pile in your S3 bill. A lifecycle rule allows you
+to define rules on how to manage old versions of objects, or objects that aren&rsquo;t frequently
+accessed. There are more details about the lifecycle rules you can enable in the <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html">official docs</a>. Specifically, in this case, we would want a <code>NoncurrentVersionExpiration</code> rule to
+automatically delete old object versions after a certain number of days. This way, you
+still have enough time to recover a deleted object, but for the vast majority of files
+that were meant to be deleted (or constantly overridden), this will greatly help manage
+your costs.</p>
+<h2 id="the-simple-takeaway">The simple takeaway</h2>
+<p>If you have versioning enabled on your bucket, <em>always</em> be sure you have a good lifecycle
+rule in place to handle object expirations. Otherwise, these costs will slowly eat away
+at your S3 bill.</p>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h"
+              >Read other posts</span
+            >
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+            
+              <span class="button next">
+                <a href="https://davidjoliver86.github.io/posts/postmortem-newegg/">
+                  <span class="button__text">Post-mortem and bonus: serverless Newegg stock checker</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+
+    
+      
+        
+
+      
+    
+  </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a
+  href="/"
+  class="logo"
+  style="text-decoration: none;"
+>
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367" />
+</svg>
+</span>
+    <span class="logo__text"
+      >the musings of mister davido</span
+    >
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span
+          >© 2021 Powered by
+          <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span
+        >
+        <span
+          >Theme created by
+          <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span
+        >
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://davidjoliver86.github.io/assets/main.js"></script>
+<script src="https://davidjoliver86.github.io/assets/prism.js"></script>
+
+
+      
+    </div>
+
+    
+  </body>
+</html>

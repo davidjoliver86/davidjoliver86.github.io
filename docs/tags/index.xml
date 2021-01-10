@@ -9,7 +9,7 @@
     <description>Recent content in Tags on The musings of Mister Davido</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 09 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 Jan 2021 12:56:58 -0800</lastBuildDate>
     
 	<atom:link href="https://davidjoliver86.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -17,9 +17,29 @@
     <item>
       <title>aws</title>
       <link>https://davidjoliver86.github.io/tags/aws/</link>
-      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 09 Jan 2021 12:56:58 -0800</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/aws/</guid>
+      <description>
+        
+          
+          
+          
+        
+        
+        
+          
+          
+        
+        </description>
+    </item>
+    
+    <item>
+      <title>s3</title>
+      <link>https://davidjoliver86.github.io/tags/s3/</link>
+      <pubDate>Sat, 09 Jan 2021 12:56:58 -0800</pubDate>
+      
+      <guid>https://davidjoliver86.github.io/tags/s3/</guid>
       <description>
         
           
@@ -100,26 +120,6 @@
       <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
       
       <guid>https://davidjoliver86.github.io/tags/python/</guid>
-      <description>
-        
-          
-          
-          
-        
-        
-        
-          
-          
-        
-        </description>
-    </item>
-    
-    <item>
-      <title>s3</title>
-      <link>https://davidjoliver86.github.io/tags/s3/</link>
-      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://davidjoliver86.github.io/tags/s3/</guid>
       <description>
         
           
