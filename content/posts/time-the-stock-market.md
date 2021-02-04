@@ -82,4 +82,4 @@ the stock market" is... "yes".
 
 [Download Spreadsheet](/ods/dca_vs_buy_dip.ods)
 
-![Timing Timmy vs. Steady Sam](/img/dca_dip.jpg)
+![Timing Timmy vs. Steady Sam](/img/dca_dip.png)
