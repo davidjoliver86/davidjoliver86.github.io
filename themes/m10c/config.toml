@@ -1,6 +1,6 @@
 [params]
-author = "Author McAuthorFace"
-description = "Author McAuthorFace is an author."
+author = "David Oliver"
+description = "The wanderings of what goes on in the mind of a Python/DevOps/AWS expert with a knack for playing the silver ball."
 avatar = "img/selfie.jpg"
 
 [[params.social]]
