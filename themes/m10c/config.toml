@@ -1,0 +1,36 @@
+[params]
+author = "Author McAuthorFace"
+description = "Author McAuthorFace is an author."
+avatar = "img/selfie.jpg"
+
+[[params.social]]
+  icon = "twitter"
+  name = "My X"
+  url = "https://twitter.com/mister_davido"
+
+[[params.social]]
+  icon = "github"
+  name = "My Github"
+  url = "https://github.com/davidjoliver86"
+
+[[params.social]]
+  icon = "linkedin"
+  name = "My LinkedIn"
+  url = "https://www.linkedin.com/in/david-oliver-88580b16/"
+
+[[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+  weight = 1
+
+[[menu.main]]
+  identifier = "tags"
+  name = "Tags"
+  url = "/tags/"
+  weight = 0
+
+[module]
+  [module.hugoVersion]
+    extended = true
+    min = "0.55.0"
