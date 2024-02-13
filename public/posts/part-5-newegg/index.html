@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Post-mortem and bonus: serverless Newegg stock checker // The Musings of Mister Davido</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.122.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Author McAuthorFace" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Post-mortem and bonus: serverless Newegg stock checker"/>
+<meta name="twitter:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+Quick update - in the last approx. 24-hour period since I deployed my stock checker to check on GTX 3070 stock, I actually did get a few hits back."/>
+
+    <meta property="og:title" content="Post-mortem and bonus: serverless Newegg stock checker" />
+<meta property="og:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+Quick update - in the last approx. 24-hour period since I deployed my stock checker to check on GTX 3070 stock, I actually did get a few hits back." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://davidjoliver86.github.io/posts/part-5-newegg/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-12-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-12-09T00:00:00+00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://davidjoliver86.github.io/"><img class="app-header-avatar" src="/img/selfie.jpg" alt="Author McAuthorFace" /></a>
+      <span class="app-header-title">The Musings of Mister Davido</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/about/">About</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+      </nav>
+      <p>Author McAuthorFace is an author.</p>
+      <div class="app-header-social">
+        
+          <a href="https://twitter.com/mister_davido" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>My X</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://github.com/davidjoliver86" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/david-oliver-88580b16/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Post-mortem and bonus: serverless Newegg stock checker</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Dec 9, 2020
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          4 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/aws/">aws</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/terraform/">terraform</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <blockquote>
+<p>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was
+beginning to surge. While the information is still relevant and factual, this tool
+was designed with once-in-a-lifetime supply chain conditions in mind, and the end
+result may not be as useful today as it was back when this article was written.</p>
+</blockquote>
+<p>Quick update - in the last approx. 24-hour period since I deployed my stock checker
+to check on GTX 3070 stock, I actually did get a few hits back. Unfortunately, most
+of those wound up being combo packs that included a motherboard. Many of them were
+Intel motherboards, whereas I&rsquo;m actually targeting a Ryzen build. Oh, and they all
+went back out of stock within about 2 minutes. So yeah - 60-second granularity can make
+the difference between seeing an item go in and out of stock, and never getting to see
+the item even hit the virtual shelf!</p>
+<h2 id="oops">Oops..</h2>
+<p>It turns out I actually forgot to add one crucial thing that can make the difference
+between actually being able to get a product - a link back in the email to the search
+page. Since we&rsquo;re already passing that URL in the <code>event</code>, we just need to pass it
+to the SNS email functions.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">send_in_stock_message</span>(
+</span></span><span style="display:flex;"><span>    sns, topic_arn: str, url: str, checker_name: str, stock_changes: Collection[str]
+</span></span><span style="display:flex;"><span>):
+</span></span><span style="display:flex;"><span>    stock_changes_lines <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join(stock_changes)
+</span></span><span style="display:flex;"><span>    subject <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[</span><span style="color:#e6db74">{</span>checker_name<span style="color:#e6db74">}</span><span style="color:#e6db74">] - New items in stock!&#34;</span>
+</span></span><span style="display:flex;"><span>    message <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Hurry up! New items in stock:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>stock_changes_lines<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>url<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>publish(TopicArn<span style="color:#f92672">=</span>topic_arn, Message<span style="color:#f92672">=</span>message, Subject<span style="color:#f92672">=</span>subject)
+</span></span></code></pre></div><p>And this may come particularly handy when we&rsquo;re able to deploy more than one stock
+checker, in case there&rsquo;s a second product we wanted to monitor. And in my case,
+that&rsquo;ll be a Radeon 6800.</p>
+<h2 id="bonus-section-deploying-multiple-instances">Bonus section: deploying multiple instances</h2>
+<p>The nice thing about designing the function around an <code>event</code> object is that we&rsquo;ve
+basically abstracted the same logic that can be applied to searching for a different
+product on Newegg. So in theory, all we actually need to do is create a separate
+<code>aws_cloudwatch_event_target</code> with a different input. So let&rsquo;s copy this from
+<code>cloudwatch.tf</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34;</span> {
+</span></span><span style="display:flex;"><span>  rule <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_cloudwatch_event_rule</span>.<span style="color:#66d9ef">every_minute</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  arn  <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  input <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
+</span></span><span style="display:flex;"><span>    url      <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">url</span>
+</span></span><span style="display:flex;"><span>    topicArn <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_sns_topic</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>    s3Bucket <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_s3_bucket</span>.<span style="color:#66d9ef">newegg</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>    s3Object <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;gtx3070&#34;</span>
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And.. there&rsquo;s kind of a small problem. We have <code>url</code> as a Terraform variable. Now we
+could remove the <code>url</code> variable and resume copy-pasting this resource.. but that&rsquo;s also
+going to create potentially a lot of repetitive code. Do we have any better options?</p>
+<h2 id="for-each-of-us-a-better-option">For each of us: a better option&hellip;</h2>
+<p>The <code>for_each</code> construct allows us to iterate over a data structure to create multiple
+&ldquo;duplicates&rdquo; of the same resource, with different variables that can be substituted as
+needed. Terraform has provided a <code>count</code> resource for a long time, but in general I
+prefer the <code>for_each</code> since it does a better job encapsulting the individual resources.
+Having run Terraform plans with large resources under a <code>count</code>, the plan gets very
+messy when something in the middle gets removed for whatever reason.</p>
+<p>We can define a single Terraform variable that stores our projects in a map - this
+effectively replaces the single <code>url</code> variable:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">variable</span> <span style="color:#e6db74">&#34;checkers&#34;</span> {
+</span></span><span style="display:flex;"><span>  type        <span style="color:#f92672">=</span> <span style="color:#66d9ef">map</span>(<span style="color:#66d9ef">string</span>)
+</span></span><span style="display:flex;"><span>  description <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;URLs for stock checkers; key is used as the scraper name and S3 object&#34;</span>
+</span></span><span style="display:flex;"><span>  default <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    gtx3070    <span style="color:#f92672">=</span> &#34;https://www.newegg.com/p/pl?d<span style="color:#f92672">=</span>gtx+3070&amp;N<span style="color:#f92672">=</span>100007709&amp;isdeptsrh<span style="color:#f92672">=</span>1&amp;PageSize<span style="color:#f92672">=</span><span style="color:#ae81ff">96</span><span style="color:#960050;background-color:#1e0010">&#34;</span>
+</span></span><span style="display:flex;"><span>    radeon6800 <span style="color:#f92672">=</span> &#34;https://www.newegg.com/p/pl?d<span style="color:#f92672">=</span>radeon+6800&amp;N<span style="color:#f92672">=</span>100007709&amp;isdeptsrh<span style="color:#f92672">=</span>1&amp;PageSize<span style="color:#f92672">=</span><span style="color:#ae81ff">96</span><span style="color:#960050;background-color:#1e0010">&#34;</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In <code>cloudwatch.tf</code>, we can redefine the event target with a <code>for_each</code> expression:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34;</span> {
+</span></span><span style="display:flex;"><span>  for_each <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">checkers</span>
+</span></span><span style="display:flex;"><span>  rule     <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_cloudwatch_event_rule</span>.<span style="color:#66d9ef">every_minute</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  arn      <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  input <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
+</span></span><span style="display:flex;"><span>    url      <span style="color:#f92672">=</span> <span style="color:#66d9ef">each</span>.<span style="color:#66d9ef">value</span>
+</span></span><span style="display:flex;"><span>    topicArn <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_sns_topic</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>    s3Bucket <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_s3_bucket</span>.<span style="color:#66d9ef">newegg</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>    s3Object <span style="color:#f92672">=</span> <span style="color:#66d9ef">each</span>.<span style="color:#66d9ef">key</span>
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And doing so causes a small change behind the scenes - the original resource is
+destroyed to make way for the new &ldquo;multi-resource&rdquo;:</p>
+<pre tabindex="0"><code>Terraform will perform the following actions:
+
+  # aws_cloudwatch_event_target.newegg_stock_checker will be destroyed
+  - resource &#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34; {
+  ...
+
+  # aws_cloudwatch_event_target.newegg_stock_checker[&#34;gtx3070&#34;] will be created
+  + resource &#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34; {
+  ...
+
+  # aws_cloudwatch_event_target.newegg_stock_checker[&#34;radeon6800&#34;] will be created
+  + resource &#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34; {
+  ...
+
+Plan: 2 to add, 0 to change, 1 to destroy.
+</code></pre><p>Also, since we modified our function, zip it up again and run Terraform to update the
+code. After I applied the plan, it only took one minute for the <code>[radeon6800] - First run successful</code>
+email to appear! Creating or modifying a new stock checker now just comes down to
+adding one line of code to generate a new event target.</p>
+<p>I hope this has been an informative, and at times, entertaining series. Now I await
+the very next follow-up - actually purchasing a new graphics card and getting my new
+gaming system setup. But I might blog about a few other things before then. :)</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

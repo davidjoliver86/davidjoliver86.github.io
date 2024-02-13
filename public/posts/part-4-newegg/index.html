@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform // The Musings of Mister Davido</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.122.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Author McAuthorFace" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform"/>
+<meta name="twitter:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+Alright.. the home stretch. At the end of the last part, we mentioned that we need a stateful data store for our Lambda function, otherwise it would keep wanting to send alerts every minute that there&rsquo;s no stock, and that&rsquo;s not very useful."/>
+
+    <meta property="og:title" content="Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform" />
+<meta property="og:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+Alright.. the home stretch. At the end of the last part, we mentioned that we need a stateful data store for our Lambda function, otherwise it would keep wanting to send alerts every minute that there&rsquo;s no stock, and that&rsquo;s not very useful." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://davidjoliver86.github.io/posts/part-4-newegg/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-12-07T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-12-07T00:00:00+00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://davidjoliver86.github.io/"><img class="app-header-avatar" src="/img/selfie.jpg" alt="Author McAuthorFace" /></a>
+      <span class="app-header-title">The Musings of Mister Davido</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/about/">About</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+      </nav>
+      <p>Author McAuthorFace is an author.</p>
+      <div class="app-header-social">
+        
+          <a href="https://twitter.com/mister_davido" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>My X</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://github.com/davidjoliver86" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/david-oliver-88580b16/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Dec 7, 2020
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          9 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/aws/">aws</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/python/">python</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/terraform/">terraform</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/lambda/">lambda</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/cloudwatch/">cloudwatch</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/s3/">s3</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <blockquote>
+<p>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was
+beginning to surge. While the information is still relevant and factual, this tool
+was designed with once-in-a-lifetime supply chain conditions in mind, and the end
+result may not be as useful today as it was back when this article was written.</p>
+</blockquote>
+<p>Alright.. the home stretch. At the end of the last part, we mentioned that we need a
+stateful data store for our Lambda function, otherwise it would keep wanting to send
+alerts every minute that there&rsquo;s no stock, and that&rsquo;s not very useful. The stateful
+data store we&rsquo;re going to use is S3.</p>
+<p>Of course, you don&rsquo;t <em>have</em> to use S3 - you could spin up a DynamoDB or RDS instance,
+and there&rsquo;s the relatively new EFS on Lambda which I haven&rsquo;t personally tested, but
+for our use case - storing an arbitrary file - S3 is my pick.</p>
+<h2 id="creating-the-s3-bucket">Creating the S3 bucket</h2>
+<p>There&rsquo;s a pretty wide array of options for the <code>aws_s3_bucket</code> resource in the
+<a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket">Terraform docs</a>
+but we only need two:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_s3_bucket&#34; &#34;newegg&#34;</span> {
+</span></span><span style="display:flex;"><span>  bucket_prefix <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;io-github-davidjoliver86-newegg-&#34;</span>
+</span></span><span style="display:flex;"><span>  acl           <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;private&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I use <code>bucket_prefix</code> in my case because all S3 buckets share a global namespace, and
+the combination of reverse domain notation, combined with the random numbers appended
+to the end, ought to ensure a globally unique name. You also can technically omit <code>acl</code>
+and it&rsquo;ll default to <code>private</code>, but it&rsquo;s still a good habit to remind youself not to <em>ever</em>
+use any of the <code>public</code> options without a good reason! Otherwise, you could end up on a
+<a href="https://businessinsights.bitdefender.com/worst-amazon-breaches">BitDefender list</a> that
+you <em>really</em> don&rsquo;t want to be on.</p>
+<p>Also - I&rsquo;m intentionally omitting another crucial thing we&rsquo;ll need to Terraform. But
+it&rsquo;ll all come together.</p>
+<h2 id="updating-our-stock-checker">Updating our stock checker</h2>
+<p>Before we update our code, let&rsquo;s think about when <em>exactly</em> we&rsquo;d want a notification.
+Obviously, we don&rsquo;t want a notification every time it runs, although I suppose there&rsquo;s
+some comfort in knowing that it&rsquo;s at least running. We want a notification when something
+lands in stock. But suppose one product is back in stock, and stays in stock for about 5
+minutes. If we run this every minute, we now have 5 notifications telling us the same
+thing. So really, we only want a notification when there&rsquo;s a change in the &ldquo;in stock&rdquo;
+offerings vs. the last time it was run.</p>
+<p>First, we&rsquo;re changing our <code>get_items_in_stock</code> function to just <code>get_items</code> so that we
+can do some analysis later:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_items</span>(self) <span style="color:#f92672">-&gt;</span> Dict[str, bool]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    After parsing the page, return a dict of the items and their stock status.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>items
+</span></span></code></pre></div><p>And now the meat of the comparison:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">compare_to_s3</span>(
+</span></span><span style="display:flex;"><span>    current_items: Dict[str, bool], s3_bucket: str, s3_obj: str
+</span></span><span style="display:flex;"><span>) <span style="color:#f92672">-&gt;</span> Tuple[Status, Collection[str]]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Diff the results against the previous state in S3, then update S3.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    s3 <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>resource(<span style="color:#e6db74">&#34;s3&#34;</span>)
+</span></span><span style="display:flex;"><span>    status <span style="color:#f92672">=</span> Status<span style="color:#f92672">.</span>NO_CHANGE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Retrieve existing dict, or instantiate an empty one if it doesn&#39;t exist in S3.</span>
+</span></span><span style="display:flex;"><span>    obj <span style="color:#f92672">=</span> s3<span style="color:#f92672">.</span>Bucket(s3_bucket)<span style="color:#f92672">.</span>Object(s3_obj)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        existing_items <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>load(obj<span style="color:#f92672">.</span>get()[<span style="color:#e6db74">&#34;Body&#34;</span>])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> exceptions<span style="color:#f92672">.</span>ClientError <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> e<span style="color:#f92672">.</span>response[<span style="color:#e6db74">&#34;Error&#34;</span>][<span style="color:#e6db74">&#34;Code&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;NoSuchKey&#34;</span>:
+</span></span><span style="display:flex;"><span>            existing_items <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>            status <span style="color:#f92672">=</span> Status<span style="color:#f92672">.</span>INITIALIZED
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">raise</span> e
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># If our items haven&#39;t changed, just exit. A PutObject operation is more costly.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> current_items <span style="color:#f92672">==</span> existing_items:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (status, set())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Are there new in-stock items compared to last time?</span>
+</span></span><span style="display:flex;"><span>    in_stock_current <span style="color:#f92672">=</span> set(
+</span></span><span style="display:flex;"><span>        [item <span style="color:#66d9ef">for</span> item, in_stock <span style="color:#f92672">in</span> current_items<span style="color:#f92672">.</span>items() <span style="color:#66d9ef">if</span> in_stock]
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    in_stock_previous <span style="color:#f92672">=</span> set(
+</span></span><span style="display:flex;"><span>        [item <span style="color:#66d9ef">for</span> item, in_stock <span style="color:#f92672">in</span> existing_items<span style="color:#f92672">.</span>items() <span style="color:#66d9ef">if</span> in_stock]
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Need to update our object now.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> io<span style="color:#f92672">.</span>BytesIO(json<span style="color:#f92672">.</span>dumps(current_items)<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#34;utf-8&#34;</span>)) <span style="color:#66d9ef">as</span> fp:
+</span></span><span style="display:flex;"><span>        obj<span style="color:#f92672">.</span>upload_fileobj(fp)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Return a set of any new items.</span>
+</span></span><span style="display:flex;"><span>    diff <span style="color:#f92672">=</span> in_stock_current <span style="color:#f92672">-</span> in_stock_previous
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> diff <span style="color:#f92672">and</span> (status <span style="color:#f92672">!=</span> Status<span style="color:#f92672">.</span>INITIALIZED):
+</span></span><span style="display:flex;"><span>        status <span style="color:#f92672">=</span> Status<span style="color:#f92672">.</span>ITEMS_IN_STOCK
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">not</span> diff) <span style="color:#f92672">and</span> in_stock_previous:
+</span></span><span style="display:flex;"><span>        status <span style="color:#f92672">=</span> Status<span style="color:#f92672">.</span>ITEMS_GONE
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (status, diff)
+</span></span></code></pre></div><p>What we&rsquo;re storing in S3 is a JSON file of the <code>items</code> dictionary - that is, the name
+of each item, and whether it was in stock. We can diff against the previous run by
+downloading our file from S3 to identify what&rsquo;s changed, then we upload the current
+items back to S3. To save money on unnecessary <code>PutObject</code> calls, we only do this
+if there&rsquo;s been a definitive change.</p>
+<p>We&rsquo;re interested in the four different possibilities:</p>
+<ul>
+<li><code>NO_CHANGE</code> - There&rsquo;s been no change to the offerings that are <em>in stock</em>. It&rsquo;s
+possible that an item can be added to the page, but have no stock initially. This
+won&rsquo;t trigger a message.</li>
+<li><code>INITIALIZED</code> - The stock checker was run for the first time. Send a message to
+confirm it works, and print the current stock list.</li>
+<li><code>ITEMS_IN_STOCK</code> - Okay.. this is the only one we&rsquo;re <em>really</em> interested in. The
+only way <code>diff</code> is non-empty is if there&rsquo;s a new in-stock item vs. the last run.</li>
+<li><code>ITEMS_GONE</code> - We were too slow (or asleep). Whatever was in stock is now gone.</li>
+</ul>
+<p>Now to make changes to our handler and create some SNS sending functions:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">send_init_message</span>(
+</span></span><span style="display:flex;"><span>    sns, topic_arn: str, checker_name: str, stock_changes: Collection[str]
+</span></span><span style="display:flex;"><span>):
+</span></span><span style="display:flex;"><span>    stock_changes_lines <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join(stock_changes)
+</span></span><span style="display:flex;"><span>    subject <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[</span><span style="color:#e6db74">{</span>checker_name<span style="color:#e6db74">}</span><span style="color:#e6db74">] - First run successful&#34;</span>
+</span></span><span style="display:flex;"><span>    message <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Stock checker operational. Items in stock:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>stock_changes_lines<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>publish(TopicArn<span style="color:#f92672">=</span>topic_arn, Message<span style="color:#f92672">=</span>message, Subject<span style="color:#f92672">=</span>subject)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">send_in_stock_message</span>(
+</span></span><span style="display:flex;"><span>    sns, topic_arn: str, checker_name: str, stock_changes: Collection[str]
+</span></span><span style="display:flex;"><span>):
+</span></span><span style="display:flex;"><span>    stock_changes_lines <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join(stock_changes)
+</span></span><span style="display:flex;"><span>    subject <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[</span><span style="color:#e6db74">{</span>checker_name<span style="color:#e6db74">}</span><span style="color:#e6db74">] - New items in stock!&#34;</span>
+</span></span><span style="display:flex;"><span>    message <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Hurry up! New items in stock:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>stock_changes_lines<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>publish(TopicArn<span style="color:#f92672">=</span>topic_arn, Message<span style="color:#f92672">=</span>message, Subject<span style="color:#f92672">=</span>subject)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">send_gone_message</span>(sns, topic_arn: str, checker_name: str):
+</span></span><span style="display:flex;"><span>    subject <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[</span><span style="color:#e6db74">{</span>checker_name<span style="color:#e6db74">}</span><span style="color:#e6db74">] - All items gone!&#34;</span>
+</span></span><span style="display:flex;"><span>    message <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Too slow...&#34;</span>
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>publish(TopicArn<span style="color:#f92672">=</span>topic_arn, Message<span style="color:#f92672">=</span>message, Subject<span style="color:#f92672">=</span>subject)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lambda_handler</span>(event, context):
+</span></span><span style="display:flex;"><span>    parser <span style="color:#f92672">=</span> NeweggParser(event[<span style="color:#e6db74">&#34;url&#34;</span>])
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>fetch()
+</span></span><span style="display:flex;"><span>    items <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>get_items()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Continue to print in-stock items to the logs.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> item, in_stock <span style="color:#f92672">in</span> items<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> in_stock:
+</span></span><span style="display:flex;"><span>            LOGGER<span style="color:#f92672">.</span>info(item)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Compare to S3 and update.</span>
+</span></span><span style="display:flex;"><span>    status, stock_changes <span style="color:#f92672">=</span> compare_to_s3(items, event[<span style="color:#e6db74">&#34;s3Bucket&#34;</span>], event[<span style="color:#e6db74">&#34;s3Object&#34;</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Return immediately if no change.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> status <span style="color:#f92672">==</span> Status<span style="color:#f92672">.</span>NO_CHANGE:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Otherwise send SNS message.</span>
+</span></span><span style="display:flex;"><span>    sns <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#34;sns&#34;</span>, region_name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;us-east-1&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> status <span style="color:#f92672">==</span> Status<span style="color:#f92672">.</span>INITIALIZED:
+</span></span><span style="display:flex;"><span>        send_init_message(sns, event[<span style="color:#e6db74">&#34;topicArn&#34;</span>], event[<span style="color:#e6db74">&#34;s3Object&#34;</span>], stock_changes)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> status <span style="color:#f92672">==</span> Status<span style="color:#f92672">.</span>ITEMS_IN_STOCK:
+</span></span><span style="display:flex;"><span>        send_in_stock_message(sns, event[<span style="color:#e6db74">&#34;topicArn&#34;</span>], event[<span style="color:#e6db74">&#34;s3Object&#34;</span>], stock_changes)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> status <span style="color:#f92672">==</span> Status<span style="color:#f92672">.</span>ITEMS_GONE:
+</span></span><span style="display:flex;"><span>        send_gone_message(sns, event[<span style="color:#e6db74">&#34;topicArn&#34;</span>], event[<span style="color:#e6db74">&#34;s3Object&#34;</span>])
+</span></span></code></pre></div><p>We&rsquo;re now adding <code>s3Bucket</code> and <code>s3Object</code> attributes that should be part of the <code>event</code>.
+Just like with <code>topicArn</code>, we can have Terraform fill in the <code>s3Bucket</code> value. Also, note
+that <code>s3Object</code> is passed in as a <code>checker_name</code> variable to these functions. This
+attribute does double-duty in that it gives this instance of the stock checker a name.
+Useful, because we can deploy more than one in parallel.</p>
+<p>Let&rsquo;s go to Terraform and add those attributes to our <code>event</code> in <code>cloudwatch.tf</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span>input <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
+</span></span><span style="display:flex;"><span>  url      <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">url</span>
+</span></span><span style="display:flex;"><span>  topicArn <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_sns_topic</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>  s3Bucket <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_s3_bucket</span>.<span style="color:#66d9ef">newegg</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  s3Object <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;gtx3070&#34;</span>
+</span></span><span style="display:flex;"><span>})
+</span></span></code></pre></div><p>Also, we need to flip the <code>is_enabled</code> switch back on - remember that we stopped it at
+the end of the last part. Zip up the code, run Terraform, and now that it&rsquo;s deployed, we
+should see an email come very shortly&hellip;</p>
+<h2 id="its-borked">It&rsquo;s borked&hellip;</h2>
+<p>Okay.. so this might be something to add to the list of &ldquo;things we want to be emailed
+about&rdquo;. Now we&rsquo;re no stranger to running into errors - we deliberately stumbled upon
+them earlier as a learning experience - but it&rsquo;s not all &ldquo;no news is good news&rdquo;. We
+need to know if something&rsquo;s broken. Enter: <em>CloudWatch Alarms.</em></p>
+<h2 id="understanding-cloudwatch-alarms">Understanding CloudWatch Alarms</h2>
+<p>To understand what a CloudWatch Alarm is, it&rsquo;s important to be aware of CloudWatch
+Metrics. Almost every AWS service reports metrics that span across your resources,
+always tabluating things that you may want to monitor. In the CloudWatch metrics
+console, we can drill down to &ldquo;Lambda&rdquo; &gt; &ldquo;By Function Name&rdquo;, and we can graph the
+number of errors our function is generating. Sure enough, it&rsquo;s not zero.</p>
+<p><img src="/img/cloudwatch_metrics.png" alt="CloudWatch Metrics"></p>
+<p>An Alarm is simply a way to define thresholds of a metric and act on them through
+an SNS notification (or autoscaling change). We would want to create an alarm
+whenever there is at least 1 error. Here&rsquo;s how that would look in Terraform:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_cloudwatch_metric_alarm&#34; &#34;lambda_errors&#34;</span> {
+</span></span><span style="display:flex;"><span>  alarm_name  <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;${var.function_name}-errors&#34;</span>
+</span></span><span style="display:flex;"><span>  namespace   <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;AWS/Lambda&#34;</span>
+</span></span><span style="display:flex;"><span>  metric_name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Errors&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # Looking over the last 60 seconds.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  period             <span style="color:#f92672">=</span> <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>  evaluation_periods <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">  # Was there &gt;= 1 error?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  comparison_operator <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;GreaterThanOrEqualToThreshold&#34;</span>
+</span></span><span style="display:flex;"><span>  threshold           <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>  statistic           <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Sum&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  alarm_actions <span style="color:#f92672">=</span> [<span style="color:#66d9ef">aws_sns_topic</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">id</span>]
+</span></span><span style="display:flex;"><span>  ok_actions    <span style="color:#f92672">=</span> [<span style="color:#66d9ef">aws_sns_topic</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">id</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  dimensions <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    &#34;FunctionName&#34; <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">function_name</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This alarm is basically stating that if there&rsquo;s been at least one error within the last
+60-second window, trigger the ALARM state. Once we&rsquo;re in an ALARM state, the SNS topic
+is sent a notification. Notice that we just reused the very same SNS topic we used to
+get our normal updates. Also, once the errors have been fixed, the alarm should drop
+below the triggering threshold, and we should get a confirmation email that the alarm
+has been resolved. Terraform it, and yep, sure enough, I get an email:</p>
+<blockquote>
+<p>ALARM: &ldquo;newegg-stock-checker-errors&rdquo; in US East (N. Virginia)</p>
+</blockquote>
+<h2 id="ever-get-that-feeling-of-deja-vu">Ever get that feeling of deja vu?</h2>
+<p>Okay, so let&rsquo;s fix our error. CloudWatch logs.. survey says&hellip; <code>[ERROR] ClientError: An error occurred (AccessDenied) when calling the GetObject operation: Access Denied</code>.
+A classic permissions error, since now the Lambda function wants to write to the S3
+bucket. So let&rsquo;s grant it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#75715e"># Allow S3 access
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_iam_policy_document&#34; &#34;s3_access&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">statement</span> {
+</span></span><span style="display:flex;"><span>    actions   <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;s3:GetObject*&#34;, &#34;s3:PutObject*&#34;</span>]
+</span></span><span style="display:flex;"><span>    resources <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;${aws_s3_bucket.newegg.arn}/*&#34;</span>]
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">statement</span> {
+</span></span><span style="display:flex;"><span>    actions   <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;s3:ListBucket&#34;</span>]
+</span></span><span style="display:flex;"><span>    resources <span style="color:#f92672">=</span> [<span style="color:#66d9ef">aws_s3_bucket</span>.<span style="color:#66d9ef">newegg</span>.<span style="color:#66d9ef">arn</span>]
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy&#34; &#34;s3_access&#34;</span> {
+</span></span><span style="display:flex;"><span>  name_prefix <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;s3-access-&#34;</span>
+</span></span><span style="display:flex;"><span>  policy      <span style="color:#f92672">=</span> <span style="color:#66d9ef">data</span>.<span style="color:#66d9ef">aws_iam_policy_document</span>.<span style="color:#66d9ef">s3_access</span>.<span style="color:#66d9ef">json</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy_attachment&#34; &#34;s3_access&#34;</span> {
+</span></span><span style="display:flex;"><span>  name       <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;s3-access&#34;</span>
+</span></span><span style="display:flex;"><span>  policy_arn <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_iam_policy</span>.<span style="color:#66d9ef">s3_access</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>  roles <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">aws_iam_role</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>GetObject</code> and <code>PutObject</code> are self-explanitory, but why the <code>ListBucket</code>? I
+actually just noticed as of this very second - without the <code>ListBucket</code> permission,
+attempting to call <code>GetObject</code> on a non-existent object will actually return a 403
+and give an &ldquo;Access Denied&rdquo; error. With <code>ListBucket</code> in place, AWS will correctly
+return a 404 <code>NoSuchKey</code> error, which is specifically what we&rsquo;re trying to catch.
+Okay, let&rsquo;s Terraform this, and&hellip;</p>
+<h2 id="very-nice-great-success">VERY NICE!! GREAT SUCCESS!!</h2>
+<p><img src="/img/great_success.png" alt="VERY NICE I LIKE"></p>
+<p>Well, yes, it&rsquo;s still out of stock - as it has been the whole time creating this
+tutorial - but at this point, we&rsquo;ve fully created an automated serverless Newegg
+stock checker, and we hardly had to do any clicking and pointing in the AWS console.
+We&rsquo;ve seen the firsthand benefits of Terraform and infrastructure-as-code to create
+a nifty project in AWS.</p>
+<h2 id="but-you-promised-we-could-deploy-more-than-one-stock-checker">But you promised we could deploy more than one stock checker?</h2>
+<p>Yes you can, and I&rsquo;ll show off a neat way to do that in a &ldquo;bonus&rdquo; part. For now, let&rsquo;s
+hope I can snag a GTX 3070&hellip;</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

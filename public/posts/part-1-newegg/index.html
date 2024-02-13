@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform // The Musings of Mister Davido</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.122.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Author McAuthorFace" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform"/>
+<meta name="twitter:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+In this series, we&rsquo;re going to create a &ldquo;stock checker&rdquo; in Python, and then later on, we&rsquo;re going to deploy it on AWS."/>
+
+    <meta property="og:title" content="Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform" />
+<meta property="og:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+In this series, we&rsquo;re going to create a &ldquo;stock checker&rdquo; in Python, and then later on, we&rsquo;re going to deploy it on AWS." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://davidjoliver86.github.io/posts/part-1-newegg/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-11-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-11-29T00:00:00+00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://davidjoliver86.github.io/"><img class="app-header-avatar" src="/img/selfie.jpg" alt="Author McAuthorFace" /></a>
+      <span class="app-header-title">The Musings of Mister Davido</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/about/">About</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+      </nav>
+      <p>Author McAuthorFace is an author.</p>
+      <div class="app-header-social">
+        
+          <a href="https://twitter.com/mister_davido" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>My X</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://github.com/davidjoliver86" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/david-oliver-88580b16/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 29, 2020
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/aws/">aws</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/python/">python</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <blockquote>
+<p>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was
+beginning to surge. While the information is still relevant and factual, this tool
+was designed with once-in-a-lifetime supply chain conditions in mind, and the end
+result may not be as useful today as it was back when this article was written.</p>
+</blockquote>
+<p>In this series, we&rsquo;re going to create a &ldquo;stock checker&rdquo; in Python, and then later on,
+we&rsquo;re going to deploy it on AWS. We&rsquo;re not going to spin up any EC2 instances either;
+this is going to be running as a &ldquo;serverless&rdquo; bot. And we&rsquo;re not going to need to have
+to do much, if any, clicking and pointing in the AWS console, thanks to the power of
+Terraform.</p>
+<h3 id="stock-checker-but-neweggs-a-privately-owned-company">Stock checker? But Newegg&rsquo;s a privately owned company&hellip;</h3>
+<p>To clarify, by &ldquo;stock checker&rdquo;, we&rsquo;re going to be writing a bot to check whether certain
+<em>products</em> are in stock. I&rsquo;m a gamer, and as my current gaming rig is beginning to show
+its age, I&rsquo;m eyeballing components for a new build. With the recent releases of the
+Nvidia GTX 30 series, the Radeon 6800 series, not to mention the PS5 and Xbox Series X,
+all under the murky clouds of the COVID pandemic, demand for these products is red hot.
+And unless you want to deal with ridiculuous markups from scalpers on eBay, your best
+bet is to find out when you can swoop in and grab an item while it&rsquo;s in stock.</p>
+<h2 id="building-the-scraper">Building the Scraper</h2>
+<p>Anyone who&rsquo;s dabbled in the Python ecosystem should be aware of many quality libraries
+that suit this use case - <code>requests</code> for dealing with HTTP requests, and <code>BeautifulSoup</code>
+to parse and extract HTML. But as part of a self-imposed challenge, as well as a way to
+make our deployment in the next post a little simpler, we&rsquo;re going to be sticking with
+the standard library. So we&rsquo;ll be using <code>urllib3</code> to deal with the HTTP request, and
+<code>html.parser.HTMLParser</code> to parse the response.</p>
+<p>To view the source code as it stands for part 1, please visit <a href="https://github.com/davidjoliver86/newegg-scraper/blob/local/newegg.py">https://github.com/davidjoliver86/newegg-scraper/blob/local/newegg.py</a>.
+In the example we&rsquo;re working with, we&rsquo;ll be looking for my target graphics card - the
+GTX 3070.</p>
+<h2 id="using-htmlparser">Using HTMLParser</h2>
+<p>We&rsquo;ll be following the recommendations of the official documentation: <a href="https://docs.python.org/3/library/html.parser.html">https://docs.python.org/3/library/html.parser.html</a>:</p>
+<blockquote>
+<p>An HTMLParser instance is fed HTML data and calls handler methods when start tags, end tags, text, comments, and other markup elements are encountered. The user should subclass HTMLParser and override its methods to implement the desired behavior.</p>
+</blockquote>
+<p>There are many different handler methods, but the only ones we&rsquo;re concerned about are:</p>
+<ul>
+<li><code>handle_starttag(self, tag, attrs)</code></li>
+<li><code>handle_endtag(self, tag)</code></li>
+<li><code>handle_data(self, data)</code></li>
+</ul>
+<p>Let&rsquo;s take a look at how they&rsquo;re implemented in our scraper:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handle_starttag</span>(self, tag, attrs):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Always increment depth.</span>
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>_depth <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Did we hit an item?</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> tag <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;div&#39;</span> <span style="color:#f92672">and</span> (<span style="color:#e6db74">&#39;class&#39;</span>, <span style="color:#e6db74">&#39;item-cell&#39;</span>) <span style="color:#f92672">in</span> attrs:
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_encountered_item <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_item_depth <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_depth
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Are we in an item-cell, and is this the element of the item&#39;s title?</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>_encountered_item <span style="color:#f92672">and</span> tag <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">and</span> (<span style="color:#e6db74">&#39;class&#39;</span>, <span style="color:#e6db74">&#39;item-title&#39;</span>) <span style="color:#f92672">in</span> attrs:
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_encountered_title <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handle_data</span>(self, data):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># If we find an item&#39;s title within its cell, add it to the items dict. Assume</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># it&#39;s in stock until (very shortly later) proven otherwise.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>_encountered_title <span style="color:#f92672">and</span> self<span style="color:#f92672">.</span>_encountered_item:
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_title <span style="color:#f92672">=</span> data
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>items[data] <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>        LOGGER<span style="color:#f92672">.</span>debug(<span style="color:#e6db74">&#34;Found product: </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;</span>, data)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> data <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;OUT OF STOCK&#39;</span>:
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>items[self<span style="color:#f92672">.</span>_title] <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>        LOGGER<span style="color:#f92672">.</span>debug(<span style="color:#e6db74">&#34;Out of stock : </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;</span>, self<span style="color:#f92672">.</span>_title)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handle_endtag</span>(self, tag):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Always decrement depth.</span>
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>_depth <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Always assume we&#39;re out of a title element.</span>
+</span></span><span style="display:flex;"><span>    self<span style="color:#f92672">.</span>_encountered_title <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Did we exit an item-cell?</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>_encountered_item <span style="color:#f92672">and</span> self<span style="color:#f92672">.</span>_depth <span style="color:#f92672">==</span> self<span style="color:#f92672">.</span>_item_depth:
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_encountered_item <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span></code></pre></div><h3 id="how-deep-can-we-go">How deep can we go?</h3>
+<p>What isn&rsquo;t visible in above excerpt are some attributes that we&rsquo;ve defined in our
+<code>HTMLParser</code> subclass. Particularly, we&rsquo;re tracking the depth of how many tags we&rsquo;re
+nested under. As it turns out, an <code>item-cell</code> element also has its own complex nesting
+of tags, and so by keeping track of our current &ldquo;tag depth&rdquo;, we can&rsquo;t assume we&rsquo;ve
+exited an <code>item-cell</code> just cause we&rsquo;ve hit an end tag.</p>
+<h3 id="the-great-encounters">The great encounters</h3>
+<p>The main way we know whether we&rsquo;ve hit our target elements - either a
+<code>&lt;div class=&quot;item-cell&quot;&gt;</code> element, or a <code>&lt;a class=&quot;item-title&quot;&gt;</code> element, is through
+the <code>handle_starttag</code> method. This method returns a 2-tuple: the tag itself, and a list
+of 2-tuple <code>('attribute_name', 'attribute_value')</code> pairs. We then set the <code>encountered</code>
+flags accordingly so the parser knows whether it&rsquo;s in an <code>item-cell</code> element, and
+particularly an <code>item-title</code> element within the <code>item-cell</code>.</p>
+<h3 id="domo-arigato-mister-databoto">Domo Arigato, Mister Databoto</h3>
+<p>Once we&rsquo;ve hit an <code>item-title</code> - that is, both <code>self._encountered_item</code> and
+<code>self._encountered_title</code> are True, then we can pull out the title of the product. For
+now, at that immediate moment in time, we assume the item will be in stock, and we store
+it as such in the <code>items</code> dict. However, as we go to the very next element, we will
+quickly be proven wrong.</p>
+<p>Just a few elements under the <code>item-title</code> - if an item is indeed out of stock, there&rsquo;ll
+be a small element simply saying &ldquo;OUT OF STOCK&rdquo;. So once we hit that element, we know
+to go back to mark that product as False - or &ldquo;out of stock&rdquo;. Because the parser works
+strictly in one direction, we can assume we&rsquo;re within the same item block, otherwise
+the subsequent call to <code>handle_endtag</code> would&rsquo;ve marked that False, meaning the next time
+that flag gets flipped, it&rsquo;s a different product.</p>
+<h3 id="the-rest">The rest</h3>
+<p>The rest of this simply covers formalities with running the script interactively -
+starting the parsing, then outputting the result.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fetch</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        Fetch data from provided URL and start parsing.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> urllib<span style="color:#f92672">.</span>request<span style="color:#f92672">.</span>urlopen(self<span style="color:#f92672">.</span>_base_url) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>feed(f<span style="color:#f92672">.</span>read()<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;utf-8&#39;</span>))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_items_in_stock</span>(self) <span style="color:#f92672">-&gt;</span> List[str]:
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        After parsing the page, return a list of items in stock.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> [item <span style="color:#66d9ef">for</span> item, avail <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>items<span style="color:#f92672">.</span>items() <span style="color:#66d9ef">if</span> avail]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Setup console logging if running interactively.</span>
+</span></span><span style="display:flex;"><span>    LOGGER<span style="color:#f92672">.</span>addHandler(logging<span style="color:#f92672">.</span>StreamHandler())
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Do the thing.</span>
+</span></span><span style="display:flex;"><span>    parser <span style="color:#f92672">=</span> NeweggParser(<span style="color:#e6db74">&#39;https://www.newegg.com/p/pl?d=gtx+3070&amp;N=100007709&amp;isdeptsrh=1&amp;PageSize=96&#39;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>fetch()
+</span></span><span style="display:flex;"><span>    print(parser<span style="color:#f92672">.</span>get_items_in_stock())
+</span></span></code></pre></div><p>The final output, as expected, is sadly an empty list, but the logging confirms that
+we&rsquo;re hitting the products correctly. We&rsquo;ll be making some tweaks to this script in
+a future post to get this ready to deploy to AWS Lambda, and then we can hopefully
+relax for a bit until I get the message that there&rsquo;s some stock available.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on The Musings of Mister Davido</title>
+    <link>https://davidjoliver86.github.io/posts/</link>
+    <description>Recent content in Posts on The Musings of Mister Davido</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://davidjoliver86.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Just thought I&#39;d resurrect this with a new theme</title>
+      <link>https://davidjoliver86.github.io/posts/resurrect/</link>
+      <pubDate>Mon, 12 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>https://davidjoliver86.github.io/posts/resurrect/</guid>
+      <description>That&amp;rsquo;s all.</description>
+    </item>
+    <item>
+      <title>Post-mortem and bonus: serverless Newegg stock checker</title>
+      <link>https://davidjoliver86.github.io/posts/part-5-newegg/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>https://davidjoliver86.github.io/posts/part-5-newegg/</guid>
+      <description>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.&#xA;Quick update - in the last approx. 24-hour period since I deployed my stock checker to check on GTX 3070 stock, I actually did get a few hits back.</description>
+    </item>
+    <item>
+      <title>Part 4/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-4-newegg/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>https://davidjoliver86.github.io/posts/part-4-newegg/</guid>
+      <description>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.&#xA;Alright.. the home stretch. At the end of the last part, we mentioned that we need a stateful data store for our Lambda function, otherwise it would keep wanting to send alerts every minute that there&amp;rsquo;s no stock, and that&amp;rsquo;s not very useful.</description>
+    </item>
+    <item>
+      <title>Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-3-newegg/</link>
+      <pubDate>Thu, 03 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>https://davidjoliver86.github.io/posts/part-3-newegg/</guid>
+      <description>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.&#xA;We&amp;rsquo;ve got a working Lambda function now, so let&amp;rsquo;s start adding in the other pieces of the AWS puzzle to turn this into a lean, mean, automated stock-checking machine.</description>
+    </item>
+    <item>
+      <title>Part 2/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-2-newegg/</link>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>https://davidjoliver86.github.io/posts/part-2-newegg/</guid>
+      <description>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.&#xA;In this part, we&amp;rsquo;re going to focus on getting a Terraform environment setup.</description>
+    </item>
+    <item>
+      <title>Part 1/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</title>
+      <link>https://davidjoliver86.github.io/posts/part-1-newegg/</link>
+      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>https://davidjoliver86.github.io/posts/part-1-newegg/</guid>
+      <description>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.&#xA;In this series, we&amp;rsquo;re going to create a &amp;ldquo;stock checker&amp;rdquo; in Python, and then later on, we&amp;rsquo;re going to deploy it on AWS.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform // The Musings of Mister Davido</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.122.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Author McAuthorFace" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform"/>
+<meta name="twitter:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+We&rsquo;ve got a working Lambda function now, so let&rsquo;s start adding in the other pieces of the AWS puzzle to turn this into a lean, mean, automated stock-checking machine."/>
+
+    <meta property="og:title" content="Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform" />
+<meta property="og:description" content="⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was beginning to surge. While the information is still relevant and factual, this tool was designed with once-in-a-lifetime supply chain conditions in mind, and the end result may not be as useful today as it was back when this article was written.
+We&rsquo;ve got a working Lambda function now, so let&rsquo;s start adding in the other pieces of the AWS puzzle to turn this into a lean, mean, automated stock-checking machine." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://davidjoliver86.github.io/posts/part-3-newegg/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2020-12-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-12-03T00:00:00+00:00" />
+
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://davidjoliver86.github.io/"><img class="app-header-avatar" src="/img/selfie.jpg" alt="Author McAuthorFace" /></a>
+      <span class="app-header-title">The Musings of Mister Davido</span>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/about/">About</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+      </nav>
+      <p>Author McAuthorFace is an author.</p>
+      <div class="app-header-social">
+        
+          <a href="https://twitter.com/mister_davido" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-twitter">
+  <title>My X</title>
+  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+</svg>
+          </a>
+        
+          <a href="https://github.com/davidjoliver86" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/david-oliver-88580b16/" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>My LinkedIn</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Part 3/4 - Create and deploy an automated, serverless Newegg stock checker using Python, Lambda, and Terraform</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Dec 3, 2020
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          9 min read
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/aws/">aws</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/python/">python</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/terraform/">terraform</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/lambda/">lambda</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/cloudwatch/">cloudwatch</a>
+              <a class="tag" href="https://davidjoliver86.github.io/tags/sns/">sns</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <blockquote>
+<p>⚠️ This tutorial is a relic of its time period, back when the COVID-19 pandemic was
+beginning to surge. While the information is still relevant and factual, this tool
+was designed with once-in-a-lifetime supply chain conditions in mind, and the end
+result may not be as useful today as it was back when this article was written.</p>
+</blockquote>
+<p>We&rsquo;ve got a working Lambda function now, so let&rsquo;s start adding in the other pieces of
+the AWS puzzle to turn this into a lean, mean, automated stock-checking machine.</p>
+<h2 id="how-often-should-we-run-it">How often should we run it?</h2>
+<p>Very good question. For a hot product that may literally last a few minutes on the
+&ldquo;shelf&rdquo;, it sounds like we&rsquo;d want to check pretty frequently. Ideally within timeframes
+of a minute. But there&rsquo;s one all-important thing to consider that holds true more than
+anything else in AWS, or cloud computing in general.</p>
+<p>Money. Moolah. Dinero. Cash money. Cash rules everything around me - C.R.E.A.M.</p>
+<p>There are two components to Lambda pricing - number of requests, and the total duration
+of time spent in the function. In us-east-1, these costs are as follows:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Requests</td>
+<td>$0.20 per 1M requests</td>
+</tr>
+<tr>
+<td>Duration</td>
+<td>$0.0000166667 for every GB-second</td>
+</tr>
+</tbody>
+</table>
+<p>And if you&rsquo;re wondering &ldquo;what in the hell is a GB-second&rdquo;, you&rsquo;re probably not alone.
+Each function allows you to allocate an amount of memory to its execution environment.
+Obviously, the more memory you allocate, the more you should have to pay. If your code
+runs for exactly 1 second in an environment with 1024 MB, you are charged
+$0.0000166667 for the duration. The vast majority of Lambda functions are well-suited
+to run in an environment with the minimum amount of 128 MB, or 1/8th that.</p>
+<p>As you may recall from the Terraform code in part 2, we created this function with
+the minimum memory allocation of 128 MB. Unless you know you&rsquo;re working on something
+that may become memory or CPU intensive, stick to the minimum at first. After invoking
+this function a few times, it does appear to have a duration of 1 second. So what would
+it cost to run this every minute?</p>
+<h2 id="eventbridge---because-too-many-things-already-started-with-cloud">EventBridge - because too many things already started with &ldquo;Cloud&rdquo;</h2>
+<p>What used to be called CloudWatch Events is now Amazon EventBridge. I&rsquo;m okay with that,
+because frankly, too many AWS offerings already start with &ldquo;Cloud&rdquo;. EventBridge is -
+quite figuratively - a bridge between events emitted by other AWS services, and targets
+to catch them and perform actions. Those events can also simply be cron tasks, and you
+set them to run as frequently as once every minute. One of the actions we can perform
+is to invoke our stock checker Lambda function. So we can set up our stock checker to
+run every minute.</p>
+<h2 id="doing-the-math">Doing the math</h2>
+<p>Let&rsquo;s assume a 31-day month. 60 minutes/hour x 24 hours/day x 31 days/month = 44,640.
+And if every invocation averages out to be 1 second, 44,600 x 0.000166667 GB/second
+x 1/8 of a GB = $0.93. And the 44,640 invocations x 0.20/1,000,000 = $0.008928. Round
+up to a penny, so that&rsquo;s $0.94/month. Here you go.</p>
+<p><img src="/img/94cents.jpg" alt="94 cents"></p>
+<h2 id="terraform-the-eventbridge-rule">Terraform the EventBridge Rule</h2>
+<p>We&rsquo;ll need to Terraform both sides of the equation - the event <em>rule</em> for the &ldquo;every
+minute&rdquo; event, and the event <em>target</em> to point to the Lambda function to invoke. Also
+note that for now, Terraform still refers to these resources through their old name,
+but the CloudWatch console also does too for now. So, yay consistency. Or CloudConsistency.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_cloudwatch_event_rule&#34; &#34;every_minute&#34;</span> {
+</span></span><span style="display:flex;"><span>  name_prefix         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;every-minute-&#34;</span>
+</span></span><span style="display:flex;"><span>  schedule_expression <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;rate(1 minute)&#34;</span>
+</span></span><span style="display:flex;"><span>  description         <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Runs every minute&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34;</span> {
+</span></span><span style="display:flex;"><span>  rule <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_cloudwatch_event_rule</span>.<span style="color:#66d9ef">every_minute</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  arn  <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  input <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
+</span></span><span style="display:flex;"><span>    url <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">url</span>  <span style="color:#960050;background-color:#1e0010">//</span> <span style="color:#66d9ef">defined</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">variables</span>.<span style="color:#66d9ef">tf</span>
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Also note the use of <code>jsonencode</code> instead of hard-coding raw JSON in heredoc format.
+This allows you to use the language primitives in a way that seamlessly translate to
+JSON. Looks like our plan and apply succeeded, so we should be seeing some action from
+this function very shortly.</p>
+<p>&hellip; I hope.</p>
+<p>*crickets*</p>
+<p>Okay.. we waited a few minutes, but it looks like there haven&rsquo;t been any invocations of
+this function. Well, it turns out this is a common &ldquo;gotcha&rdquo; about Terraforming a Lambda
+function to run on a schedule. From the <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target">Terraform aws_cloudwatch_event_rule docs</a>:</p>
+<blockquote>
+<p>In order to be able to have your AWS Lambda function or SNS topic invoked by an EventBridge rule, you must setup the right permissions using aws_lambda_permission or aws_sns_topic.policy. More info <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/resource-based-policies-cwe.html">here</a>.</p>
+</blockquote>
+<p>So now let&rsquo;s add our <code>aws_lambda_permission</code> to allow our <del>CloudWatch</del> EventBridge rule to
+invoke it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_lambda_permission&#34; &#34;newegg_stock_checker_every_minute&#34;</span> {
+</span></span><span style="display:flex;"><span>  action        <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;lambda:InvokeFunction&#34;</span>
+</span></span><span style="display:flex;"><span>  function_name <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">function_name</span>
+</span></span><span style="display:flex;"><span>  principal     <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;events.amazonaws.com&#34;</span>
+</span></span><span style="display:flex;"><span>  source_arn    <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_cloudwatch_event_rule</span>.<span style="color:#66d9ef">every_minute</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Terraform plan/apply again, and now we see the function getting executed! Let&rsquo;s take a look
+at the logs:</p>
+<pre tabindex="0"><code>START RequestId: ecaad111-c954-4fae-a35d-0247c924cdaf Version: $LATEST
+[]
+END RequestId: ecaad111-c954-4fae-a35d-0247c924cdaf
+REPORT RequestId: ecaad111-c954-4fae-a35d-0247c924cdaf	Duration: 274.30 ms	Billed Duration: 275 ms	Memory Size: 128 MB	Max Memory Used: 57 MB
+</code></pre><p>So yes, unfortunately there&rsquo;s still no stock, but it does look to be running every minute. It
+also looks like I dramatically overestimated the duration - I was getting my figure from
+invoking it with the test event. And it appears to be right-sized for memory utilization.
+But come on&hellip; wasn&rsquo;t the point of this stock checker to make it so I don&rsquo;t have to keep my
+eyes glued on a page 24/7? Luckily we don&rsquo;t need to.</p>
+<h2 id="setting-up-sns-for-email-notifications">Setting up SNS for email notifications</h2>
+<p>What we really want to do is have it send an email as soon as there&rsquo;s some stock
+available. And the best way to do that in an environment where we&rsquo;re in full control
+over who to send emails to (me) is through SNS.</p>
+<p>It&rsquo;s pretty simple, as the first &ldquo;S&rdquo; in the name implies. We&rsquo;ll create an SNS topic
+for our Lambda function to publish messages to, then we&rsquo;ll add my email as a
+subscription endpoint. It&rsquo;s basically a classic pub/sub implementation. In <code>sns.tf</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_sns_topic&#34; &#34;newegg_stock_checker&#34;</span> {
+</span></span><span style="display:flex;"><span>  name_prefix <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;newegg-stock-checker-&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Once we&rsquo;ve created our topic with a plan/apply, we&rsquo;ll add an email endpoint. While
+it is technically possible to Terraform it, the <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription">aws_sns_topic_subscription docs</a>
+advise against it:</p>
+<blockquote>
+<p>These are unsupported because the endpoint needs to be authorized and does not generate an ARN until the target email address has been validated. This breaks the Terraform model and as a result are not currently supported.</p>
+</blockquote>
+<p>So we&rsquo;ll just go in the console and add our subscription, then click the confirmation
+link in the email that follows:</p>
+<p><img src="/img/sns_topic_subscription.png" alt="SNS topic subscription"></p>
+<h2 id="integrating-sns">Integrating SNS</h2>
+<p>Now we&rsquo;ll need to actually integrate SNS into the workflow. The execution environment
+for our function just so happens to include <code>boto3</code>, which is what we&rsquo;ll use to have
+our function send messages to the SNS topic, from which the SNS topic relays that
+message to all its subscribers (i.e. me). In <code>newegg.py</code>, we&rsquo;ll add two imports:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#f92672">import</span> boto3
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> json
+</span></span></code></pre></div><p>And add some more to the <code>lambda_handler</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lambda_handler</span>(event, context):
+</span></span><span style="display:flex;"><span>    parser <span style="color:#f92672">=</span> NeweggParser(event[<span style="color:#e6db74">&#34;url&#34;</span>])
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>fetch()
+</span></span><span style="display:flex;"><span>    items_in_stock <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>get_items_in_stock()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Continue to print it to the logs.</span>
+</span></span><span style="display:flex;"><span>    LOGGER<span style="color:#f92672">.</span>info(items_in_stock)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Send an SNS message too.</span>
+</span></span><span style="display:flex;"><span>    sns <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(<span style="color:#e6db74">&#34;sns&#34;</span>, region_name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;us-east-1&#34;</span>)
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>publish(
+</span></span><span style="display:flex;"><span>        TopicArn<span style="color:#f92672">=</span>event[<span style="color:#e6db74">&#34;topicArn&#34;</span>],
+</span></span><span style="display:flex;"><span>        Subject<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Newegg Stock Check Alert&#34;</span>,
+</span></span><span style="display:flex;"><span>        Message<span style="color:#f92672">=</span>json<span style="color:#f92672">.</span>dumps(items_in_stock),
+</span></span><span style="display:flex;"><span>    )
+</span></span></code></pre></div><p>Notice that we&rsquo;re getting the <code>topicArn</code> item from the <code>event</code> dictionary, even though
+we didn&rsquo;t define it before. Luckily, we can derive that ARN from within Terraform. This
+is a much better practice in my opinion than simply hardcoding the <code>topicArn</code> in the
+function itself. In <code>cloudwatch.tf</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-hcl" data-lang="hcl"><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34;</span> {
+</span></span><span style="display:flex;"><span>  rule <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_cloudwatch_event_rule</span>.<span style="color:#66d9ef">every_minute</span>.<span style="color:#66d9ef">id</span>
+</span></span><span style="display:flex;"><span>  arn  <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_lambda_function</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  input <span style="color:#f92672">=</span> <span style="color:#66d9ef">jsonencode</span>({
+</span></span><span style="display:flex;"><span>    url      <span style="color:#f92672">=</span> <span style="color:#66d9ef">var</span>.<span style="color:#66d9ef">url</span>
+</span></span><span style="display:flex;"><span>    topicArn <span style="color:#f92672">=</span> <span style="color:#66d9ef">aws_sns_topic</span>.<span style="color:#66d9ef">newegg_stock_checker</span>.<span style="color:#66d9ef">arn</span>
+</span></span><span style="display:flex;"><span>  })
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Now when we re-zip our function code, we hope that&rsquo;ll trigger an update. Let&rsquo;s see if
+Terraform wants to:</p>
+<pre tabindex="0"><code>An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # aws_cloudwatch_event_target.newegg_stock_checker will be updated in-place
+  ~ resource &#34;aws_cloudwatch_event_target&#34; &#34;newegg_stock_checker&#34; {
+        arn            = &#34;arn:aws:lambda:us-east-1:MY_ACCOUNT_ID:function:newegg-stock-checker&#34;
+        event_bus_name = &#34;default&#34;
+        id             = &#34;every-minute-20201204060835803400000001-terraform-20201204060837710900000002&#34;
+      ~ input          = jsonencode(
+          ~ {
+              + topicArn = &#34;arn:aws:sns:us-east-1:MY_ACCOUNT_ID:newegg-stock-checker-20201204064825927800000001&#34;
+                url      = &#34;https://www.newegg.com/p/pl?d=gtx+3070&amp;N=100007709&amp;isdeptsrh=1&amp;PageSize=96&#34;
+            }
+        )
+        rule           = &#34;every-minute-20201204060835803400000001&#34;
+        target_id      = &#34;terraform-20201204060837710900000002&#34;
+    }
+
+  # aws_lambda_function.newegg_stock_checker will be updated in-place
+  ~ resource &#34;aws_lambda_function&#34; &#34;newegg_stock_checker&#34; {
+        arn                            = &#34;arn:aws:lambda:us-east-1:MY_ACCOUNT_ID:function:newegg-stock-checker&#34;
+        filename                       = &#34;newegg.zip&#34;
+        function_name                  = &#34;newegg-stock-checker&#34;
+        handler                        = &#34;newegg.lambda_handler&#34;
+        id                             = &#34;newegg-stock-checker&#34;
+        invoke_arn                     = &#34;arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:MY_ACCOUNT_ID:function:newegg-stock-checker/invocations&#34;
+      ~ last_modified                  = &#34;2020-12-04T06:20:15.206+0000&#34; -&gt; (known after apply)
+        layers                         = []
+        memory_size                    = 128
+        publish                        = false
+        qualified_arn                  = &#34;arn:aws:lambda:us-east-1:MY_ACCOUNT_ID:function:newegg-stock-checker:$LATEST&#34;
+        reserved_concurrent_executions = -1
+        role                           = &#34;arn:aws:iam::MY_ACCOUNT_ID:role/newegg-stock-checker&#34;
+        runtime                        = &#34;python3.8&#34;
+      ~ source_code_hash               = &#34;OglgTDSdxTM/32aDilEJlSzYmTLT/ubrEg3sWSe9jmw=&#34; -&gt; &#34;/Wi4bcZA4A6ziNkHDTqLw1GPXZDLGgDp14uBud/JwAA=&#34;
+        source_code_size               = 1419
+        tags                           = {}
+        timeout                        = 3
+        version                        = &#34;$LATEST&#34;
+
+        tracing_config {
+            mode = &#34;PassThrough&#34;
+        }
+    }
+
+Plan: 0 to add, 2 to change, 0 to destroy.
+</code></pre><p>Looks good, so let&rsquo;s apply, and play the waiting game&hellip; eh, the waiting game sucks,
+let&rsquo;s play Hungry Hungry Hippos instead.</p>
+<p>Turns out the reason the waiting game sucks is.. we&rsquo;ve hit an error.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>[ERROR] AuthorizationErrorException: An error occurred (AuthorizationError) when calling the Publish operation: User: arn:aws:sts::MY_ACCOUNT_ID:assumed<span style="color:#f92672">-</span>role<span style="color:#f92672">/</span>newegg<span style="color:#f92672">-</span>stock<span style="color:#f92672">-</span>checker<span style="color:#f92672">/</span>newegg<span style="color:#f92672">-</span>stock<span style="color:#f92672">-</span>checker <span style="color:#f92672">is</span> <span style="color:#f92672">not</span> authorized to perform: SNS:Publish on resource: arn:aws:sns:us<span style="color:#f92672">-</span>east<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>:MY_ACCOUNT_ID:newegg<span style="color:#f92672">-</span>stock<span style="color:#f92672">-</span>checker<span style="color:#f92672">-</span><span style="color:#ae81ff">20201204064825927800000001</span>
+</span></span><span style="display:flex;"><span>Traceback (most recent call last):
+</span></span><span style="display:flex;"><span>  File <span style="color:#e6db74">&#34;/var/task/newegg.py&#34;</span>, line <span style="color:#ae81ff">102</span>, <span style="color:#f92672">in</span> lambda_handler
+</span></span><span style="display:flex;"><span>    sns<span style="color:#f92672">.</span>publish(TopicArn<span style="color:#f92672">=</span>event[<span style="color:#e6db74">&#34;topicArn&#34;</span>], Message<span style="color:#f92672">=</span>json<span style="color:#f92672">.</span>dumps(items_in_stock))
+</span></span><span style="display:flex;"><span>  File <span style="color:#e6db74">&#34;/var/runtime/botocore/client.py&#34;</span>, line <span style="color:#ae81ff">357</span>, <span style="color:#f92672">in</span> _api_call
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_make_api_call(operation_name, kwargs)
+</span></span><span style="display:flex;"><span>  File <span style="color:#e6db74">&#34;/var/runtime/botocore/client.py&#34;</span>, line <span style="color:#ae81ff">676</span>, <span style="color:#f92672">in</span> _make_api_call
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">raise</span> error_class(parsed_response, operation_name)
+</span></span></code></pre></div><p>So it looks like the function doesn&rsquo;t have permission to publish to that topic. Here&rsquo;s
+the principle of least privilege in action - grant only the bare minimum capabilities
+you possibly can. This qualifies it as a bare minimum, so let&rsquo;s add a policy to <code>iam.tf</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tf" data-lang="tf"><span style="display:flex;"><span><span style="color:#75715e"># Allow publishing to SNS
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">data</span> <span style="color:#e6db74">&#34;aws_iam_policy_document&#34;</span> <span style="color:#e6db74">&#34;publish_to_sns&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">statement</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">actions</span>   = [<span style="color:#e6db74">&#34;SNS:Publish&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">resources</span> = [<span style="color:#a6e22e">aws_sns_topic</span>.<span style="color:#a6e22e">newegg_stock_checker</span>.<span style="color:#a6e22e">arn</span>]
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy&#34;</span> <span style="color:#e6db74">&#34;publish_to_sns&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name_prefix</span> = <span style="color:#e6db74">&#34;publish-to-sns-&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy</span>      = data.<span style="color:#a6e22e">aws_iam_policy</span>.<span style="color:#a6e22e">publish_to_sns</span>.<span style="color:#a6e22e">json</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">resource</span> <span style="color:#e6db74">&#34;aws_iam_policy_attachment&#34;</span> <span style="color:#e6db74">&#34;publish_to_sns&#34;</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">name</span>       = <span style="color:#e6db74">&#34;publish-to-sns&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">policy_arn</span> = <span style="color:#a6e22e">aws_iam_policy</span>.<span style="color:#a6e22e">publish_to_sns</span>.<span style="color:#a6e22e">arn</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">roles</span> = [
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">aws_iam_role</span>.<span style="color:#a6e22e">newegg_stock_checker</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And once we plan/apply these changes, we now see email alerts!</p>
+<p><img src="/img/sns_email.png" alt="SNS email alert"></p>
+<h2 id="aaaagh-the-spam">AAAAGH THE SPAM</h2>
+<p>So it works&hellip; a little too well. Okay, clearly there&rsquo;s an issue with these alerts,
+since we&rsquo;re getting them every minute, and the results haven&rsquo;t changed. We only
+want to get an alert when it matters - that is, when there&rsquo;s actually a change in
+stock. In the next - and final - part, we&rsquo;ll introduce a stateful data store so that
+we can get notifications when there&rsquo;s a meaningful stock change. Also, given the
+Lambda errors we hit, it&rsquo;s probably also equally useful to get alerts if the function
+errors out, so we&rsquo;ll add those too. But for right now&hellip;</p>
+<h2 id="cutting-off-the-spam">Cutting off the spam</h2>
+<p>The most efficient way to do this seems to be just adding a <code>is_disabled = false</code>
+statement to the <code>aws_cloudwatch_event_rule</code> resource. So I&rsquo;ll do that for now, and
+we can re-enable it once we&rsquo;ve got better alerting in place.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
